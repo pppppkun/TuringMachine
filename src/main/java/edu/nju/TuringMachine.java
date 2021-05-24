@@ -21,9 +21,9 @@ public class TuringMachine {
     // 终止状态集
     Set<String> F;
     // 空格符号
-    char B;
+    Character B;
     // 磁带数
-    int tapeNum;
+    Integer tapeNum;
     // 迁移函数集
     Set<TransitionFunction> Delta;
 
@@ -46,43 +46,69 @@ public class TuringMachine {
         for (String s : var) {
             i++;
             s = s.trim();
+            String[] res;
             if (s.length() != 0 && !IOUtils.IsComment(s)) {
-                switch (s.charAt(1)) {
-                    case 'Q':
+                switch (s.substring(0, 2)) {
+                    case "#Q":
                         Q = new HashSet<>();
-                        Q.addAll(Arrays.asList(IOUtils.SplitString(s)));
+                        res = IOUtils.SplitString(s);
+                        if(res == null) System.err.println("Error: " + i);
+                        else Q.addAll(Arrays.asList(res));
                         break;
-                    case 'S':
+                    case "#S":
                         S = new HashSet<>();
-                        Arrays.asList(IOUtils.SplitString(s)).forEach(s1 -> S.add(s1.charAt(0)));
+                        res = IOUtils.SplitString(s);
+                        if(res == null) System.err.println("Error: " + i);
+                        else Arrays.asList(res).forEach(s1 -> S.add(s1.charAt(0)));
                         break;
-                    case 'G':
+                    case "#G":
                         G = new HashSet<>();
-                        Arrays.asList(IOUtils.SplitString(s)).forEach(s1 -> G.add(s1.charAt(0)));
+                        res = IOUtils.SplitString(s);
+                        if(res == null) System.err.println("Error: " + i);
+                        else Arrays.asList(res).forEach(s1 -> G.add(s1.charAt(0)));
                         break;
-                    case 'F':
+                    case "#F":
                         F = new HashSet<>();
-                        F.addAll(Arrays.asList(IOUtils.SplitString(s)));
+                        res = IOUtils.SplitString(s);
+                        if(res == null) System.err.println("Error: " + i);
+                        else F.addAll(Arrays.asList(res));
                         break;
-                    case 'q':
-                        q = s.split(" ")[2];
+                    case "#q":
+                        if(s.charAt(2) != '0') System.err.println("Error: "+ i);
+                        else q = s.split(" ")[2];
                         break;
-                    case 'B':
+                    case "#B":
                         B = s.split(" ")[2].charAt(0);
                         break;
-                    case 'N':
+                    case "#N":
                         tapeNum = Integer.parseInt(s.split(" ")[2]);
                         break;
-                    default:
-                        if (s.charAt(1) != ' ') {
-                            System.err.println();
-//                            throw new TMSyntaxErrorException("syntax line: " + i);
-                        }
+                    case "#D":
+                        s = s.substring(3);
+                        res = s.split(" ");
+                        if(res[1].length() != res[2].length()) System.err.println("Error: "+i);
                         else Delta.add(new TransitionFunction(s));
+                        break;
+                    default:
+                        System.err.println("Error: " + i);
                         break;
                 }
             }
         }
+        if(Q==null) System.err.println("Error: lack Q");
+        if(S==null) System.err.println("Error: lack S");
+        if(G==null) System.err.println("Error: lack G");
+        if(F==null) System.err.println("Error: lack F");
+        if(q==null) System.err.println("Error: lack q0");
+        if(B==null) System.err.println("Error: lack B");
+        if(tapeNum==null) System.err.println("Error: lack N");
+        if(Delta.size()==0) {
+            System.err.println("Error: lack D");
+        }
+        else {
+            int a = Delta.size();
+        }
+
     }
 
     //TODO
@@ -99,49 +125,5 @@ public class TuringMachine {
         Delta.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
         stringBuilder.deleteCharAt(stringBuilder.length()-1);
         return stringBuilder.toString();
-    }
-
-    public static void main(String[] args) {
-        TuringMachine TM = new TuringMachine("; This example program checks if the input string is a a_nb_n.\n" +
-                "; Input: a string of a's and b's, e.g. '1001001'\n" +
-                "; the finite set of states\n" +
-                "#Q = {0, 1, 2, 3, 4}\n" +
-                "\n" +
-                "; the finite set of input symbols\n" +
-                "#S = {a, b}\n" +
-                "\n" +
-                "; the complete set of tape symbols\n" +
-                "#G = {a, b, _}\n" +
-                "\n" +
-                "; the start state\n" +
-                "#q0 = 0\n" +
-                "\n" +
-                "; the set of final states\n" +
-                "#F = {4}\n" +
-                "#B = _\n" +
-                "#N = 1\n" +
-                "\n" +
-                "\n" +
-                "; the transition functions\n" +
-                "\n" +
-                "; State 0: start state\n" +
-                "0 a _ r 1\n" +
-                "0 _ _ r 4\n" +
-                "\n" +
-                "; State 1:\n" +
-                "1 a a r 1\n" +
-                "1 b b r 1\n" +
-                "1 _ _ l 2\n" +
-                "\n" +
-                "; State 2:\n" +
-                "2 b _ l 3\n" +
-                "\n" +
-                "; State 3:\n" +
-                "3 a a l 3\n" +
-                "3 b b l 3\n" +
-                "3 _ _ r 0");
-
-        System.out.println(TM);
-
     }
 }

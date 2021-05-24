@@ -130,8 +130,9 @@ public String toString()
   - 在本次实验中，错误仅包含以下情况
     - 漏写括号
     - 出现了无法解析的内容，即不属于任何最后给出的格式的内容
-    - 某个需要的七元组信息不在输入当中（此时不需要输出错误行数，需要输出`Error: lack [info]`，info处可能出现的情况为Q,S,G,q0,F,B,Delta）
+    - 某个需要的七元组信息不在输入当中（此时不需要输出错误行数，需要输出`Error: lack [info]`，info处可能出现的情况为Q,S,G,q0,F,B,N,Delta）
     - 输入的Delta函数读取的符号和写回的符号长度不同
+      - 如果Delta函数相关的输入全都错误，也相当于没有输入Delta的任何信息，标准错误流中还需要输出`Error: lack D`
 
 我们的输入一定会遵守以下假设
 
@@ -142,11 +143,11 @@ public String toString()
 - Input symbols 和 tape symbols集合中的元素长度均只有一个字符
 - 磁带数不会超过Int能表示的范围
 
-#### 参考输入
+#### 参考用例
 
 ```
 ; This example program checks if the input string is a a_nb_n.
-; Input: a string of a's and b's, e.g. '1001001'
+; Input: a string of a's and b's, e.g. 'aaabbb'
 ; the finite set of states
 #Q = {0, 1, 2, 3, 4}
 
@@ -169,6 +170,71 @@ public String toString()
 ; the transition functions
 
 ; State 0: start state
+#D 0 a _ r 1
+#D 0 _ _ r 4
+
+; State 1:
+#D 1 a a r 1
+#D 1 b b r 1
+#D 1 _ _ l 2
+
+; State 2:
+#D 2 b _ l 3
+
+; State 3:
+#D 3 a a l 3
+#D 3 b b l 3
+#D 3 _ _ r 0
+```
+
+输入这些内容或者我们预定义好的几个集合的时候，会得到一个TM对象，当调用该对象的toString方法的时候，我们不对里面的内容的顺序有任何要求，只需要不同的信息都在不同行即可，比如对于上面输入得到的图灵机，调用他的toString方法时，你输出的信息可以是下面这样，不要输出任何多余的内容，包括注释。
+
+还有需要注意的是，集合中任意两项之间不要留有空格，每一行的信息需要在一行的开头就给出，也就是说#Q需要在所在的行的最开头，不要留有空格，最后一行不要有换行符，#{Q\S\G\N\F\q0\B}和=号，=号和{之间都需要留出一个空格。
+
+```
+#Q = {0,1,2,3,4}
+#S = {a,b}
+#G = {a,b,_}
+#N = 1
+#D 3 b b l l
+#D 1 b b r r
+#D 1 a a r r
+#D 0 a _ r r
+#F = {4}
+#q0 = 0
+#B = _
+#D 3 _ _ r r
+#D 3 a a l l
+#D 0 _ _ r r
+#D 1 _ _ l l
+#D 2 b _ l l
+```
+
+如果对于以下输入
+
+```
+; This example program checks if the input string is a a_nb_n.
+; Input: a string of a's and b's, e.g. 'aaabbb'
+; the finite set of states
+#Q = {0, 1, 2, 3, 4
+
+; the finite set of input symbols
+
+
+; the complete set of tape symbols
+#G = a, b, _}
+
+; the start state
+#q0 = 0
+
+; the set of final states
+#F = {4}
+
+#B = _
+
+; the transition functions
+
+; State 0: start state
 0 a _ r 1
 0 _ _ r 4
 
@@ -186,34 +252,16 @@ public String toString()
 3 _ _ r 0
 ```
 
-或者一个TM对象
-
-#### 参考输出
-
-一个TuringMaching对象或者一个字符串
-
-当调用toString方法的时候，我们不对里面的内容的顺序有任何要求，只需要不同的信息都在不同行即可，比如对于上面输入得到的图灵机，调用他的toString方法时，你输出的信息可以是下面这样，不要输出任何多余的内容，包括注释。
-
-还有需要注意的是，集合中任意两项之间不要留有空格，每一行的信息需要在一行的开头就给出，也就是说#Q需要在所在的行的最开头，不要留有空格，最后一行不要有换行符，#{Q\S\G\N\F\q0\B}和=号，=号和{之间都需要留出一个空格。
+需要给出输出
 
 ```
-#Q = {0,1,2,3,4}
-#S = {a,b}
-#G = {a,b,_}
-#N = 1
-3 b b l l
-1 b b r r
-1 a a r r
-0 a _ r r
-#F = {4}
-#q0 = 0
-#B = _
-3 _ _ r r
-3 a a l l
-0 _ _ r r
-1 _ _ l l
-2 b _ l l
+Error: 4
+Error: 10
+Error: lack S
+Error: lack N
 ```
+
+输出没有顺序要求
 
 #### 代码指导
 
@@ -328,7 +376,7 @@ public String toString()
     #N = 2
    ```
 
-8. **转移函数 delta**：每个转移函数占用 (且仅占用) 图灵机程序的一行，行内容为一个五元组。五元组格式为：”<旧状态> <旧符号组> <新符号组> <方向组> <新状态>"，元组各部分之间以一个空格分隔。
+8. **转移函数 delta**：每个转移函数占用 (且仅占用) 图灵机程序的一行，行内容为一个五元组。五元组格式为：”<旧状态> <旧符号组> <新符号组> <方向组> <新状态>"，元组各部分之间以一个空格分隔。以`#D`开头
 
    - **(新、旧) 状态** 定义见 **状态集**。
    - **(新、旧) 符号组** 均由 `n` 个**纸带符号**组成的字符串表示。
@@ -337,7 +385,7 @@ public String toString()
    示例：
 
    ```plain
-    cmp 01 __ rl reject ; 当前处于状态 cmp
+    #D cmp 01 __ rl reject ; 当前处于状态 cmp
                         ; 两个带头下符号分别为 '0' 和 '1'
                         ; 将要写入的新符号为 '_' 和 '_'
                         ; 下一步第一个带头向右移动，第二个带头向左移动

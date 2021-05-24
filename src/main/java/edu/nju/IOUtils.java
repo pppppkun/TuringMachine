@@ -15,9 +15,14 @@ public class IOUtils {
         stringBuilder.append("}\n");
         return stringBuilder.toString();
     }
+
+    //split with { }
     public static String[] SplitString(String s) {
         int i = 0;
+        for (i = 0; i < s.length(); i++) if (s.charAt(i) == '}') break;
+        if (i == s.length()) return null;
         for (i = 0; i < s.length(); i++) if (s.charAt(i) == '{') break;
+        if (i == s.length()) return null;
         s = s.substring(i);
         String[] var1 = s.split(",");
         var1[0] = var1[0].substring(1);
@@ -27,6 +32,7 @@ public class IOUtils {
         }
         return var1;
     }
+
     public static boolean IsComment(String s) {
         return s.charAt(0) == ';';
     }

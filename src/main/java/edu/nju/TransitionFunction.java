@@ -69,9 +69,8 @@ public class TransitionFunction {
         this.direction = direction;
     }
 
-    //TODO
     @Override
     public String toString() {
-        return fromState + " " + input + " " + output + " " + direction + " " + direction + "\n";
+        return "#D " + fromState + " " + input + " " + output + " " + direction + " " + toState + "\n";
     }
 }

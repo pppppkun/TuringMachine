@@ -102,12 +102,7 @@ public class TuringMachine {
         if(q==null) System.err.println("Error: lack q0");
         if(B==null) System.err.println("Error: lack B");
         if(tapeNum==null) System.err.println("Error: lack N");
-        if(Delta.size()==0) {
-            System.err.println("Error: lack D");
-        }
-        else {
-            int a = Delta.size();
-        }
+        if(Delta.size()==0) System.err.println("Error: lack D");
 
     }
 

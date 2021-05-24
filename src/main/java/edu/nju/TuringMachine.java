@@ -119,9 +119,9 @@ public class TuringMachine {
         stringBuilder.append(IOUtils.SetToString("S", S));
         stringBuilder.append(IOUtils.SetToString("G", G));
         stringBuilder.append(IOUtils.SetToString("F", F));
-        stringBuilder.append("#q0 = ").append(q).append("\n");
-        stringBuilder.append("#B = ").append(B).append("\n");
-        stringBuilder.append("#N = ").append(tapeNum).append("\n");
+        stringBuilder.append("#q0 = ").append(q).append(System.lineSeparator());
+        stringBuilder.append("#B = ").append(B).append(System.lineSeparator());
+        stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
         Delta.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
         stringBuilder.deleteCharAt(stringBuilder.length()-1);
         return stringBuilder.toString();

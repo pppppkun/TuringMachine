@@ -102,14 +102,14 @@ public class TMTest {
             stringBuilder.append(IOUtils.SetToString("S", inputSymbolSet));
             stringBuilder.append(IOUtils.SetToString("G", tapeSymbolSet));
             stringBuilder.append(IOUtils.SetToString("F", finalSet));
-            stringBuilder.append("#q0 = ").append(q0).append("\n");
-            stringBuilder.append("#B = ").append('_').append("\n");
-            stringBuilder.append("#N = ").append(tapeNum).append("\n");
+            stringBuilder.append("#q0 = ").append(q0).append(System.lineSeparator());
+            stringBuilder.append("#B = ").append('_').append(System.lineSeparator());
+            stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
             transitionFunctions.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
             String var = stringBuilder.toString();
-            ArrayList<String> expect = new ArrayList<>(Arrays.asList(var.split("\n")));
-            ArrayList<String> actual = new ArrayList<>(Arrays.asList(tm.toString().split("\n")));
+            ArrayList<String> expect = new ArrayList<>(Arrays.asList(var.split(System.lineSeparator())));
+            ArrayList<String> actual = new ArrayList<>(Arrays.asList(tm.toString().split(System.lineSeparator())));
             if (expect.size() != actual.size()) fail("图灵机序列化结果长度错误");
             for (String s : expect) {
                 if (!actual.contains(s)) {
@@ -136,49 +136,49 @@ public class TMTest {
             StringBuilder stringBuilderA = new StringBuilder();
             StringBuilder stringBuilderB = new StringBuilder();
             for (int i = 0; i < new Random().nextInt(20); i++)
-                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append("\n");
+                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append(System.lineSeparator());
             t = new Random().nextInt(16);
             while (t-- > 0) stringBuilderA.append(" ");
             stringBuilderA.append(IOUtils.SetToString("Q", stateSet));
             stringBuilderB.append(IOUtils.SetToString("Q", stateSet));
             for (int i = 0; i < new Random().nextInt(20); i++)
-                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append("\n");
+                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append(System.lineSeparator());
             t = new Random().nextInt(16);
             while (t-- > 0) stringBuilderA.append(" ");
             stringBuilderA.append(IOUtils.SetToString("S", inputSymbolSet));
             stringBuilderB.append(IOUtils.SetToString("S", inputSymbolSet));
             for (int i = 0; i < new Random().nextInt(20); i++)
-                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append("\n");
+                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append(System.lineSeparator());
             t = new Random().nextInt(16);
             while (t-- > 0) stringBuilderA.append(" ");
             stringBuilderA.append(IOUtils.SetToString("G", tapeSymbolSet));
             stringBuilderB.append(IOUtils.SetToString("G", tapeSymbolSet));
             for (int i = 0; i < new Random().nextInt(20); i++)
-                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append("\n");
+                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append(System.lineSeparator());
             stringBuilderA.append(IOUtils.SetToString("F", finalSet));
             stringBuilderB.append(IOUtils.SetToString("F", finalSet));
             for (int i = 0; i < new Random().nextInt(20); i++)
-                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append("\n");
+                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append(System.lineSeparator());
             t = new Random().nextInt(16);
             while (t-- > 0) stringBuilderA.append(" ");
-            stringBuilderA.append("#q0 = ").append(q0).append("\n");
-            stringBuilderB.append("#q0 = ").append(q0).append("\n");
+            stringBuilderA.append("#q0 = ").append(q0).append(System.lineSeparator());
+            stringBuilderB.append("#q0 = ").append(q0).append(System.lineSeparator());
             t = new Random().nextInt(16);
             while (t-- > 0) stringBuilderA.append(" ");
-            stringBuilderA.append("#B = ").append('_').append("\n");
-            stringBuilderB.append("#B = ").append('_').append("\n");
+            stringBuilderA.append("#B = ").append('_').append(System.lineSeparator());
+            stringBuilderB.append("#B = ").append('_').append(System.lineSeparator());
             for (int i = 0; i < new Random().nextInt(20); i++)
-                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append("\n");
-            stringBuilderA.append("#N = ").append(tapeNum).append("\n");
-            stringBuilderB.append("#N = ").append(tapeNum).append("\n");
+                stringBuilderA.append("; ").append(RandomStringUtils.randomAlphanumeric(16, 256)).append(System.lineSeparator());
+            stringBuilderA.append("#N = ").append(tapeNum).append(System.lineSeparator());
+            stringBuilderB.append("#N = ").append(tapeNum).append(System.lineSeparator());
             transitionFunctions.forEach(transitionFunction -> stringBuilderA.append(transitionFunction.toString()));
             transitionFunctions.forEach(transitionFunction -> stringBuilderB.append(transitionFunction.toString()));
             stringBuilderA.deleteCharAt(stringBuilderA.length() - 1);
             stringBuilderB.deleteCharAt(stringBuilderB.length() - 1);
             String var = stringBuilderA.toString();
             TuringMachine tm = new TuringMachine(var);
-            ArrayList<String> expect = new ArrayList<>(Arrays.asList(stringBuilderB.toString().split("\n")));
-            ArrayList<String> actual = new ArrayList<>(Arrays.asList(tm.toString().split("\n")));
+            ArrayList<String> expect = new ArrayList<>(Arrays.asList(stringBuilderB.toString().split(System.lineSeparator())));
+            ArrayList<String> actual = new ArrayList<>(Arrays.asList(tm.toString().split(System.lineSeparator())));
             if (expect.size() != actual.size()) fail("图灵机序列化结果长度错误");
             for (String s : expect) {
                 if (!actual.contains(s)) {
@@ -192,7 +192,7 @@ public class TMTest {
     // 测试：漏写括号
     @Test
     public void testNormalCreateC() {
-        int size = 1000;
+        int size = 50;
         while (size-- > 0) {
             int tapeNum = 0;
             int lineno;
@@ -219,21 +219,21 @@ public class TMTest {
             } else stringBuilder.append(IOUtils.SetToString("S", inputSymbolSet));
             stringBuilder.append(IOUtils.SetToString("G", tapeSymbolSet));
             stringBuilder.deleteCharAt(stringBuilder.length() - 2);
-            lineno = stringBuilder.toString().split("\n").length;
+            lineno = stringBuilder.toString().split(System.lineSeparator()).length;
             errorIndex.add(lineno);
             stringBuilder.append(IOUtils.SetToString("F", finalSet));
-            stringBuilder.append("#q0 = ").append(q0).append("\n");
-            stringBuilder.append("#B = ").append('_').append("\n");
-            stringBuilder.append("#N = ").append(tapeNum).append("\n");
+            stringBuilder.append("#q0 = ").append(q0).append(System.lineSeparator());
+            stringBuilder.append("#B = ").append('_').append(System.lineSeparator());
+            stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
             transitionFunctions.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
             String var = stringBuilder.toString();
             TuringMachine tm = new TuringMachine(var);
-            String[] error = errContent.toString().split("\n");
+            String[] error = errContent.toString().split(System.lineSeparator());
             for (int i = 0; i < error.length; i++) {
                 error[i] = error[i].substring(7);
                 if (!errorIndex.contains(Integer.parseInt(error[i])))
-                    fail("第" + error[i] + "行: " + var.split("\n")[Integer.parseInt(error[i]) - 1] + " 没有错误");
+                    fail("第" + error[i] + "行: " + var.split(System.lineSeparator())[Integer.parseInt(error[i]) - 1] + " 没有错误");
                 else errorIndex.remove(Integer.valueOf(error[i]));
             }
             if (errorIndex.size() != 0) fail("有错误还未被检测出");
@@ -244,7 +244,7 @@ public class TMTest {
     // 测试：出现了无法解析的内容，即不属于任何最后给出的格式的内容
     @Test
     public void testNormalCreateD() {
-        int size = 1000;
+        int size = 50;
         while (size-- > 0) {
             int tapeNum = 0;
             while (tapeNum == 0) tapeNum = new Random().nextInt(20);
@@ -274,27 +274,27 @@ public class TMTest {
             stringBuilder.append(IOUtils.SetToString("F", finalSet));
             lineno++;
             if (new Random().nextBoolean()) {
-                stringBuilder.append(RandomStringUtils.randomAlphanumeric(255)).append("\n");
+                stringBuilder.append(RandomStringUtils.randomAlphanumeric(255)).append(System.lineSeparator());
                 errorIndex.add(lineno++);
             }
-            stringBuilder.append("#q0 = ").append(q0).append("\n");
+            stringBuilder.append("#q0 = ").append(q0).append(System.lineSeparator());
             lineno++;
-            stringBuilder.append("#B = ").append('_').append("\n");
+            stringBuilder.append("#B = ").append('_').append(System.lineSeparator());
             lineno++;
             stringBuilder.append("#what happen?\n");
             errorIndex.add(lineno++);
             stringBuilder.append("the TA in SEC1 is cute!\n");
             errorIndex.add(lineno++);
-            stringBuilder.append("#N = ").append(tapeNum).append("\n");
+            stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
             transitionFunctions.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
             String var = stringBuilder.toString();
             TuringMachine tm = new TuringMachine(var);
-            String[] error = errContent.toString().split("\n");
+            String[] error = errContent.toString().split(System.lineSeparator());
             for (int i = 0; i < error.length; i++) {
                 error[i] = error[i].substring(7);
                 if (!errorIndex.contains(Integer.parseInt(error[i])))
-                    fail("第" + error[i] + "行: " + var.split("\n")[Integer.parseInt(error[i]) - 1] + " 没有错误");
+                    fail("第" + error[i] + "行: " + var.split(System.lineSeparator())[Integer.parseInt(error[i]) - 1] + " 没有错误");
                 else errorIndex.remove(Integer.valueOf(error[i]));
             }
             if (errorIndex.size() != 0) fail("有错误还未被检测出");
@@ -305,7 +305,7 @@ public class TMTest {
     // 测试： 某个需要的七元组信息不在输入当中
     @Test
     public void testNormalCreateE() {
-        int size = 1000;
+        int size = 100;
         while (size-- > 0) {
             int tapeNum = 0;
             while (tapeNum == 0) tapeNum = new Random().nextInt(20);
@@ -325,11 +325,11 @@ public class TMTest {
             else errorIndex.add("Error: lack G");
             if (new Random().nextBoolean()) stringBuilder.append(IOUtils.SetToString("F", finalSet));
             else errorIndex.add("Error: lack F");
-            if (new Random().nextBoolean()) stringBuilder.append("#q0 = ").append(q0).append("\n");
+            if (new Random().nextBoolean()) stringBuilder.append("#q0 = ").append(q0).append(System.lineSeparator());
             else errorIndex.add("Error: lack q0");
-            if (new Random().nextBoolean()) stringBuilder.append("#B = ").append('_').append("\n");
+            if (new Random().nextBoolean()) stringBuilder.append("#B = ").append('_').append(System.lineSeparator());
             else errorIndex.add("Error: lack B");
-            if (new Random().nextBoolean()) stringBuilder.append("#N = ").append(tapeNum).append("\n");
+            if (new Random().nextBoolean()) stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
             else errorIndex.add("Error: lack N");
             if (new Random().nextBoolean())
                 transitionFunctions.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
@@ -337,7 +337,7 @@ public class TMTest {
             if (stringBuilder.length() != 0) stringBuilder.deleteCharAt(stringBuilder.length() - 1);
             String var = stringBuilder.toString();
             TuringMachine tm = new TuringMachine(var);
-            String[] error = errContent.toString().split("\n");
+            String[] error = errContent.toString().split(System.lineSeparator());
             ArrayList<String> t = new ArrayList<>(errorIndex);
             for (String s : error) {
                 if (s.length() == 0) continue;
@@ -355,7 +355,7 @@ public class TMTest {
     // 测试：输入的Delta函数读取的符号和写回的符号长度不同
     @Test
     public void testNormalCreateF() {
-        int size = 10;
+        int size = 50;
         while (size-- > 0) {
             int tapeNum = 0;
             int lineno = 1;
@@ -376,11 +376,11 @@ public class TMTest {
             lineno++;
             stringBuilder.append(IOUtils.SetToString("F", finalSet));
             lineno++;
-            stringBuilder.append("#q0 = ").append(q0).append("\n");
+            stringBuilder.append("#q0 = ").append(q0).append(System.lineSeparator());
             lineno++;
-            stringBuilder.append("#B = ").append('_').append("\n");
+            stringBuilder.append("#B = ").append('_').append(System.lineSeparator());
             lineno++;
-            stringBuilder.append("#N = ").append(tapeNum).append("\n");
+            stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
             lineno++;
 //            transitionFunctions.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
             for (int i = 0; i < 30; i++) {
@@ -396,7 +396,7 @@ public class TMTest {
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
             String var = stringBuilder.toString();
             TuringMachine tm = new TuringMachine(var);
-            String[] error = errContent.toString().split("\n");
+            String[] error = errContent.toString().split(System.lineSeparator());
             for (int i = 0; i < error.length; i++) {
                 if(error[i].length()==0) continue;
                 error[i] = error[i].substring(7);
@@ -404,7 +404,7 @@ public class TMTest {
                     fail();
                 }
                 if (!errorIndex.contains(Integer.parseInt(error[i])))
-                    fail("第" + error[i] + "行: " + var.split("\n")[Integer.parseInt(error[i]) - 1] + " 没有错误");
+                    fail("第" + error[i] + "行: " + var.split(System.lineSeparator())[Integer.parseInt(error[i]) - 1] + " 没有错误");
                 else errorIndex.remove(Integer.valueOf(error[i]));
             }
             if (errorIndex.size() != 0) fail("有错误还未被检测出");

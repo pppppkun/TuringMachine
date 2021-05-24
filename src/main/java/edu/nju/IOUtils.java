@@ -12,7 +12,7 @@ public class IOUtils {
         stringBuilder.append("#").append(name).append(" = {");
         set.forEach(s -> stringBuilder.append(s).append(","));
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        stringBuilder.append("}\n");
+        stringBuilder.append("}").append(System.lineSeparator());
         return stringBuilder.toString();
     }
 

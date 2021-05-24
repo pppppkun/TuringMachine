@@ -71,6 +71,6 @@ public class TransitionFunction {
 
     @Override
     public String toString() {
-        return "#D " + fromState + " " + input + " " + output + " " + direction + " " + toState + "\n";
+        return "#D " + fromState + " " + input + " " + output + " " + direction + " " + toState + System.lineSeparator();
     }
 }

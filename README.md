@@ -402,3 +402,4 @@ Error: lack N
     0 __ __ ** accept ; empty input
    ```
 
+> 本格式来自 [图灵机程序语法](https://ptc-nju.github.io/#%E9%99%84%E5%BD%95-%E5%9B%BE%E7%81%B5%E6%9C%BA%E7%A8%8B%E5%BA%8F%E8%AF%AD%E6%B3%95)

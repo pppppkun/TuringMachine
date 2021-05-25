@@ -1,3 +1,4 @@
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -10,8 +11,12 @@ public class IOUtils {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("#").append(name).append(" = {");
         set.forEach(s -> stringBuilder.append(s).append(","));
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        stringBuilder.append("}\n");
+        if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        }
+        else  stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        stringBuilder.append("}").append(System.lineSeparator());
         return stringBuilder.toString();
     }
     public static String[] SplitString(String s) {
@@ -31,8 +36,9 @@ public class IOUtils {
     }
 
     public static void main(String[] args) {
-        String[] s = SplitString("#F = {12312, 12,312,3123, 21,3,12,3}");
-        for (String s1 : s) System.out.println(s1);
+//        String[] s = SplitString("#F = {12312, 12,312,3123, 21,3,12,3}");
+//        for (String s1 : s) System.out.println(s1);
+        SetToString("q", new HashSet<>());
     }
 
 }

@@ -106,7 +106,7 @@ public class TMTest {
             stringBuilder.append("#B = ").append('_').append(System.lineSeparator());
             stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
             transitionFunctions.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            DeleteLastLineSeparator(stringBuilder);
             String var = stringBuilder.toString();
             ArrayList<String> expect = new ArrayList<>(Arrays.asList(var.split(System.lineSeparator())));
             ArrayList<String> actual = new ArrayList<>(Arrays.asList(tm.toString().split(System.lineSeparator())));
@@ -173,8 +173,8 @@ public class TMTest {
             stringBuilderB.append("#N = ").append(tapeNum).append(System.lineSeparator());
             transitionFunctions.forEach(transitionFunction -> stringBuilderA.append(transitionFunction.toString()));
             transitionFunctions.forEach(transitionFunction -> stringBuilderB.append(transitionFunction.toString()));
-            stringBuilderA.deleteCharAt(stringBuilderA.length() - 1);
-            stringBuilderB.deleteCharAt(stringBuilderB.length() - 1);
+            DeleteLastLineSeparator(stringBuilderA);
+            DeleteLastLineSeparator(stringBuilderB);
             String var = stringBuilderA.toString();
             TuringMachine tm = new TuringMachine(var);
             ArrayList<String> expect = new ArrayList<>(Arrays.asList(stringBuilderB.toString().split(System.lineSeparator())));
@@ -226,7 +226,7 @@ public class TMTest {
             stringBuilder.append("#B = ").append('_').append(System.lineSeparator());
             stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
             transitionFunctions.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            DeleteLastLineSeparator(stringBuilder);
             String var = stringBuilder.toString();
             TuringMachine tm = new TuringMachine(var);
             String[] error = errContent.toString().split(System.lineSeparator());
@@ -262,13 +262,13 @@ public class TMTest {
             stringBuilder.append(IOUtils.SetToString("S", inputSymbolSet));
             lineno++;
             if (new Random().nextBoolean()) {
-                stringBuilder.append("#q = bingo!\n");
+                stringBuilder.append("#q = bingo!").append(System.lineSeparator());
                 errorIndex.add(lineno++);
             }
             stringBuilder.append(IOUtils.SetToString("G", tapeSymbolSet));
             lineno++;
             if (new Random().nextBoolean()) {
-                stringBuilder.append("#error = bingo!\n");
+                stringBuilder.append("#error = bingo!").append(System.lineSeparator());
                 errorIndex.add(lineno++);
             }
             stringBuilder.append(IOUtils.SetToString("F", finalSet));
@@ -281,13 +281,13 @@ public class TMTest {
             lineno++;
             stringBuilder.append("#B = ").append('_').append(System.lineSeparator());
             lineno++;
-            stringBuilder.append("#what happen?\n");
+            stringBuilder.append("#what happen?").append(System.lineSeparator());
             errorIndex.add(lineno++);
-            stringBuilder.append("the TA in SEC1 is cute!\n");
+            stringBuilder.append("the TA in SEC1 is cute!").append(System.lineSeparator());
             errorIndex.add(lineno++);
             stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
             transitionFunctions.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            DeleteLastLineSeparator(stringBuilder);
             String var = stringBuilder.toString();
             TuringMachine tm = new TuringMachine(var);
             String[] error = errContent.toString().split(System.lineSeparator());
@@ -329,12 +329,13 @@ public class TMTest {
             else errorIndex.add("Error: lack q0");
             if (new Random().nextBoolean()) stringBuilder.append("#B = ").append('_').append(System.lineSeparator());
             else errorIndex.add("Error: lack B");
-            if (new Random().nextBoolean()) stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
+            if (new Random().nextBoolean())
+                stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
             else errorIndex.add("Error: lack N");
             if (new Random().nextBoolean())
                 transitionFunctions.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
             else errorIndex.add("Error: lack D");
-            if (stringBuilder.length() != 0) stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            DeleteLastLineSeparator(stringBuilder);
             String var = stringBuilder.toString();
             TuringMachine tm = new TuringMachine(var);
             String[] error = errContent.toString().split(System.lineSeparator());
@@ -392,13 +393,13 @@ public class TMTest {
             }
             transitionFunctions.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
             int flag = 0;
-            if(errorIndex.size()==30) flag=1;
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            if (errorIndex.size() == 30) flag = 1;
+            DeleteLastLineSeparator(stringBuilder);
             String var = stringBuilder.toString();
             TuringMachine tm = new TuringMachine(var);
             String[] error = errContent.toString().split(System.lineSeparator());
             for (int i = 0; i < error.length; i++) {
-                if(error[i].length()==0) continue;
+                if (error[i].length() == 0) continue;
                 error[i] = error[i].substring(7);
                 if (!(error[i].equals("lack D") && flag == 1)) {
                     fail();
@@ -409,6 +410,16 @@ public class TMTest {
             }
             if (errorIndex.size() != 0) fail("有错误还未被检测出");
             errContent.reset();
+        }
+    }
+
+    private void DeleteLastLineSeparator(StringBuilder stringBuilder) {
+        if(stringBuilder.length()!=0){
+            if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+                stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+                stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            }
+            else  stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         }
     }
 

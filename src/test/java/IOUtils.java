@@ -11,11 +11,7 @@ public class IOUtils {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("#").append(name).append(" = {");
         set.forEach(s -> stringBuilder.append(s).append(","));
-        if(System.getProperty("os.name").toLowerCase().contains("windows")) {
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        }
-        else  stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         stringBuilder.append("}").append(System.lineSeparator());
         return stringBuilder.toString();
     }

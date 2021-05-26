@@ -114,6 +114,7 @@ public class TuringMachine {
     //TODO
     public ArrayList<String> delta(String q, ArrayList<String> Z) {
         ArrayList<String> pYD = null;
+        
         return null;
     }
 

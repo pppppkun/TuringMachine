@@ -37,9 +37,5 @@ public class IOUtils {
         return s.charAt(0) == ';';
     }
 
-    public static void main(String[] args) {
-        String[] s = SplitString("#F = {12312, 12,312,3123, 21,3,12,3}");
-        for (String s1 : s) System.out.println(s1);
-    }
 
 }

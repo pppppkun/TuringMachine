@@ -8,6 +8,6 @@ import java.util.ArrayList;
  */
 public class Tape {
 
-    ArrayList<Track> tracks;
+    ArrayList<String> tape;
 
 }

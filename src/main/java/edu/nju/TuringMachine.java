@@ -117,12 +117,12 @@ public class TuringMachine {
         return null;
     }
 
-    private TransitionFunction ChooseDelta(String q, ArrayList<String> Z) {
+    private TransitionFunction chooseDelta(String q, ArrayList<String> Z) {
         return null;
     }
 
     //TODO
-    public boolean IsStop() {
+    public boolean isStop() {
         return true;
     }
 

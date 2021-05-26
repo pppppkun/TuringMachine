@@ -17,7 +17,7 @@ public class Executor {
     }
 
     //TODO
-    public ArrayList<Tape> Execute() {
+    public ArrayList<Tape> execute() {
         return null;
     }
 

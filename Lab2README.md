@@ -147,16 +147,13 @@ HeadB           _
 
 ### 2. 实验要求
 
-本次实验中，同学们需要实现四个方法
+本次实验中，同学们需要实现一个方法
 
 ```
 public ArrayList<Tape> execute() {} // Executor.java
-public void LoadTape(ArrayList<Tape> tapes) {} // Executor.java
-public ArrayList<String> delta(String q, ArrayList<String> Z) {} // TuringMachine.java 
-public boolean IsStop() {} // TuringMachine.java
 ```
 
-其中，只有Execute方法是必须要实现的，因为我们的测试程序只会调用execute方法和Executor类的构造方法。其他方法，如果大家不需要的话也可以不用。在Executor类的构造方法里需要能够判断出**图灵机**和**磁带**不合法的地方。Execute()方法需要让读取的图灵机在事先给好的磁带上执行。
+execute()方法需要让读取的图灵机在事先给好的磁带上执行。我们在测试的时候，会先构造好一个图灵机对象，然后将对象和磁带作为参数传给Executor类，并且执行execute方法，
 
 本次实验中，图灵机和磁带不合法的地方仅包含以下情况
 
@@ -176,14 +173,13 @@ public boolean IsStop() {} // TuringMachine.java
 
 8. 迁移函数读取的符号和新写入的符号不属于输入符号集
 
-当输入出现了上述错误时，需要能够报告出来，假设出现了输入符号集并不是磁带符号集的子集的错误，那么需要在标准错误流中输出`Error: 6`，不能遇到一个错误后就直接退出，需要报告出全部的错误，不可以多报。
+当输入出现了上述错误时，需要能够报告出来，假设出现了输入符号集并不是磁带符号集的子集的错误，那么需要在标准错误流中输出`Error: 6`，不能遇到一个错误后就直接退出，需要报告出全部的错误，不可以多报，同一个错误不需要报多次
 
 #### 参考用例
 
 每个用例我们都会输入一个图灵机和一个磁带
 
 ```
-​```
 ; This example program checks if the input string is a a_nb_n.
 ; Input: a string of a's and b's, e.g. 'aaabbb'
 ; the finite set of states
@@ -223,7 +219,6 @@ public boolean IsStop() {} // TuringMachine.java
 #D 3 a a l 3
 #D 3 b b l 3
 #D 3 _ _ r 0
-​```
 ```
 
 如果给出的磁带是`___aaabbb___`，最后磁带会变成`________`，并且图灵机处于终止态
@@ -260,3 +255,6 @@ public boolean IsStop() {} // TuringMachine.java
 
 当然，得益于Java本身自带了很多库，在不改变原有代码结构的情况下也可以做到O(1)的查询速度。因为大家只需要实现一个构造函数和一个方法，所以这次作业自定义的程度比较高，大家可以根据自己的想法实现。如果大家想要自己构思一个结构的话，建议大家遵守面向对象设计原则，把高内聚低耦合放在心上，做好数据和职责的一致性。
 
+大部分需要检查的不合法的地方都是和集合与集合之间的关系有关的，幸好Java已经提供好了相关的库可以让我们调用，求两个Set的交集可以用`retainAll`这个方法，并集、差集大家可以自己去研究一下。
+
+错误处理相关的信息在加载图灵机的时候就可以检测出一部分了，如果大家实验一写的代码可拓展性比较好的话，很容易继续往里面添加内容。

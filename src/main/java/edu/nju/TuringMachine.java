@@ -1,9 +1,6 @@
 package edu.nju;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Author: pkun
@@ -12,21 +9,21 @@ import java.util.Set;
 public class TuringMachine {
 
     // 状态集合
-    Set<String> Q;
+    private Set<String> Q;
     // 输入符号集
-    Set<Character> S;
+    private Set<Character> S;
     // 磁带符号集
-    Set<Character> G;
+    private Set<Character> G;
     // 初始状态
-    String q;
+    private String q;
     // 终止状态集
-    Set<String> F;
+    private Set<String> F;
     // 空格符号
-    Character B;
+    private Character B;
     // 磁带数
-    Integer tapeNum;
+    private Integer tapeNum;
     // 迁移函数集
-    Set<TransitionFunction> Delta;
+    private Map<TransitionFunction, TransitionFunction> Delta;
 
     public TuringMachine(Set<String> Q, Set<Character> S, Set<Character> G, String q, Set<String> F, char B, int tapeNum, Set<TransitionFunction> Delta) {
         this.Q = Q;
@@ -36,13 +33,18 @@ public class TuringMachine {
         this.F = F;
         this.B = B;
         this.tapeNum = tapeNum;
-        this.Delta = Delta;
+        this.Delta = new HashMap<>();
+        for(TransitionFunction t : Delta) {
+            this.Delta.put(t, t);
+        }
+//        this.Delta = Delta;
     }
 
     //TODO
     public TuringMachine(String tm) {
         String[] var = tm.split("\n");
-        Delta = new HashSet<>();
+//        Delta = new HashSet<>();
+        Delta = new HashMap<>();
         int i = 0;
         for (String s : var) {
             i++;
@@ -98,16 +100,17 @@ public class TuringMachine {
                                 System.err.println("Error: 7");
                                 break;
                             }
-                            if (!S.containsAll(Utils.stringToCharSet(res[1]))) {
+                            if (!G.containsAll(Utils.stringToCharSet(res[1]))) {
                                 System.err.println("Error: 8");
                                 break;
                             }
-                            if (!S.containsAll(Utils.stringToCharSet(res[2]))) {
+                            if (!G.containsAll(Utils.stringToCharSet(res[2]))) {
                                 System.err.println("Error: 8");
                                 break;
                             }
                         }
-                        Delta.add(new TransitionFunction(s));
+                        TransitionFunction transitionFunction = new TransitionFunction(s);
+                        Delta.put(transitionFunction, transitionFunction);
                         break;
                     default:
                         System.err.println("Error: " + i);
@@ -116,10 +119,10 @@ public class TuringMachine {
             }
         }
         assert F != null;
-        if (Utils.isSubSet(F, Q)) System.err.println("Error: 3");
+        if (!Utils.isSubSet(F, Q)) System.err.println("Error: 3");
         if (S.contains(B)) System.err.println("Error: 4");
         if (!G.contains(B)) System.err.println("Error: 5");
-        if (Utils.isSubSet(S, G)) System.err.println("Error: 6");
+        if (!Utils.isSubSet(S, G)) System.err.println("Error: 6");
         if (Q == null) System.err.println("Error: lack Q");
         if (S == null) System.err.println("Error: lack S");
         if (G == null) System.err.println("Error: lack G");
@@ -136,19 +139,34 @@ public class TuringMachine {
     }
 
     //TODO
-    public ArrayList<String> delta(String q, ArrayList<String> Z) {
-        ArrayList<String> pYD = null;
-
-        return null;
+    public ArrayList<String> delta(String Z) {
+        TransitionFunction t = chooseDelta(q, Z);
+        q = t.getToState();
+        return new ArrayList<>(Arrays.asList(t.getOutput(), t.getDirection()));
     }
 
-    private TransitionFunction chooseDelta(String q, ArrayList<String> Z) {
-        return null;
+    private TransitionFunction chooseDelta(String q, String Z) {
+        TransitionFunction transitionFunction = new TransitionFunction();
+        transitionFunction.setFromState(q);
+        transitionFunction.setInput(Z);
+        return Delta.get(transitionFunction);
     }
 
     //TODO
-    public boolean isStop() {
+    public boolean isStop(String Z) {
+        return F.contains(q) || chooseDelta(q, Z) == null;
+    }
+
+    public boolean checkTape(Set<Character> tape) {
+        if(!G.containsAll(tape)) {
+            System.err.println("Error: 1");
+            return false;
+        }
         return true;
+    }
+
+    public boolean checkTapeNum(int tapeNum){
+        return tapeNum == this.tapeNum;
     }
 
     //TODO
@@ -162,7 +180,8 @@ public class TuringMachine {
         stringBuilder.append("#q0 = ").append(q).append(System.lineSeparator());
         stringBuilder.append("#B = ").append(B).append(System.lineSeparator());
         stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
-        Delta.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
+//        Delta.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
+        Delta.values().forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         return stringBuilder.toString();
     }

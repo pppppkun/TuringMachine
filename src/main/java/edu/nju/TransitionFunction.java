@@ -1,5 +1,6 @@
 package edu.nju;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -8,11 +9,13 @@ import java.util.Objects;
  */
 public class TransitionFunction {
 
-    String fromState;
-    String toState;
-    String input;
-    String output;
-    String direction;
+    private String fromState;
+    private String toState;
+    private String input;
+    private String output;
+    private String direction;
+
+    public TransitionFunction() {}
 
     public TransitionFunction(String fromState, String toState, String input, String output, String direction) {
         this.fromState = fromState;
@@ -39,14 +42,6 @@ public class TransitionFunction {
         this.fromState = fromState;
     }
 
-    public String getToState() {
-        return toState;
-    }
-
-    public void setToState(String toState) {
-        this.toState = toState;
-    }
-
     public String getInput() {
         return input;
     }
@@ -55,20 +50,16 @@ public class TransitionFunction {
         this.input = input;
     }
 
+    public String getToState() {
+        return toState;
+    }
+
     public String getOutput() {
         return output;
     }
 
-    public void setOutput(String output) {
-        this.output = output;
-    }
-
     public String getDirection() {
         return direction;
-    }
-
-    public void setDirection(String direction) {
-        this.direction = direction;
     }
 
     @Override
@@ -81,11 +72,28 @@ public class TransitionFunction {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransitionFunction that = (TransitionFunction) o;
-        return getFromState().equals(that.getFromState()) && getToState().equals(that.getToState()) && getInput().equals(that.getInput()) && getOutput().equals(that.getOutput()) && getDirection().equals(that.getDirection());
+        return getFromState().equals(that.getFromState()) && getInput().equals(that.getInput());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFromState(), getToState(), getInput(), getOutput(), getDirection());
+        return Objects.hash(getFromState(), getInput());
+    }
+
+    public static void main(String[] args) {
+        TransitionFunction t = new TransitionFunction("1", "2", "3", "4", "5");
+        TransitionFunction t1 = new TransitionFunction("2", "3", "4", "5", "6");
+        TransitionFunction t2 = new TransitionFunction("3", "4", "5", "6", "7");
+        HashMap<TransitionFunction, TransitionFunction> map = new HashMap<>();
+        map.put(t, t);
+        map.put(t1,t1);
+        map.put(t2,t2);
+        TransitionFunction g = map.get(t);
+        TransitionFunction o = new TransitionFunction();
+        o.setFromState("3");
+        o.setInput("5");
+        TransitionFunction o1 = map.get(o);
+        System.out.println(o.hashCode());
+        System.out.println(t2.hashCode());
     }
 }

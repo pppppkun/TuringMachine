@@ -1,5 +1,7 @@
 package edu.nju;
 
+import java.util.Objects;
+
 /**
  * @Author: pkun
  * @CreateTime: 2021-05-23 16:19
@@ -72,5 +74,18 @@ public class TransitionFunction {
     @Override
     public String toString() {
         return "#D " + fromState + " " + input + " " + output + " " + direction + " " + toState + System.lineSeparator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TransitionFunction that = (TransitionFunction) o;
+        return getFromState().equals(that.getFromState()) && getToState().equals(that.getToState()) && getInput().equals(that.getInput()) && getOutput().equals(that.getOutput()) && getDirection().equals(that.getDirection());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFromState(), getToState(), getInput(), getOutput(), getDirection());
     }
 }

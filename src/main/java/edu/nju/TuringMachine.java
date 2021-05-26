@@ -1,5 +1,6 @@
 package edu.nju;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -104,6 +105,17 @@ public class TuringMachine {
         if(tapeNum==null) System.err.println("Error: lack N");
         if(Delta.size()==0) System.err.println("Error: lack D");
 
+    }
+
+    //TODO
+    public ArrayList<String> delta(String q, ArrayList<String> Z) {
+        ArrayList<String> pYD = null;
+        return null;
+    }
+
+    //TODO
+    public boolean IsStop() {
+        return true;
     }
 
     //TODO

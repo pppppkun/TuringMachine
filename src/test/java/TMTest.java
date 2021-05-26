@@ -218,7 +218,8 @@ public class TMTest {
                 errorIndex.add(2);
             } else stringBuilder.append(IOUtils.SetToString("S", inputSymbolSet));
             stringBuilder.append(IOUtils.SetToString("G", tapeSymbolSet));
-            stringBuilder.deleteCharAt(stringBuilder.length() - 2);
+            if(System.getProperty("os.name").toLowerCase().contains("windows")) stringBuilder.deleteCharAt(stringBuilder.length() - 3);
+            else stringBuilder.deleteCharAt(stringBuilder.length() - 2);
             lineno = stringBuilder.toString().split(System.lineSeparator()).length;
             errorIndex.add(lineno);
             stringBuilder.append(IOUtils.SetToString("F", finalSet));

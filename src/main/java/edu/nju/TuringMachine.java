@@ -107,9 +107,17 @@ public class TuringMachine {
 
     }
 
+    public String getState() {
+        return q;
+    }
+
     //TODO
     public ArrayList<String> delta(String q, ArrayList<String> Z) {
         ArrayList<String> pYD = null;
+        return null;
+    }
+
+    private TransitionFunction ChooseDelta(String q, ArrayList<String> Z) {
         return null;
     }
 

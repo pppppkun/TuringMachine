@@ -156,5 +156,107 @@ public ArrayList<String> delta(String q, ArrayList<String> Z) {} // TuringMachin
 public boolean IsStop() {} // TuringMachine.java
 ```
 
-其中，只有Execute方法是必须要实现的，因为我们的测试程序只会调用execute方法和Executor类的构造方法。其他方法，如果大家不需要的话也可以不用。在Executor类的构造方法里需要能够判断出**图灵机**和**纸带**不合法的地方。Execute()方法需要让读取的图灵机在事先给好的磁带上执行。
+其中，只有Execute方法是必须要实现的，因为我们的测试程序只会调用execute方法和Executor类的构造方法。其他方法，如果大家不需要的话也可以不用。在Executor类的构造方法里需要能够判断出**图灵机**和**磁带**不合法的地方。Execute()方法需要让读取的图灵机在事先给好的磁带上执行。
+
+本次实验中，图灵机和磁带不合法的地方仅包含以下情况
+
+1. 输入的磁带中出现了不属于输入符号集的字符
+
+2. 图灵机中的磁带数和输入磁带的磁带数冲突
+
+3. 终结状态集不属于状态集
+
+4. 空格符号出现在了输入符号集
+
+5. 空格符号没有出现在磁带符号集
+
+6. 输入符号集并不是磁带符号集的子集
+
+7. 迁移函数的新旧状态不属于状态集
+
+8. 迁移函数读取的符号和新写入的符号不属于输入符号集
+
+当输入出现了上述错误时，需要能够报告出来，假设出现了输入符号集并不是磁带符号集的子集的错误，那么需要在标准错误流中输出`Error: 6`，不能遇到一个错误后就直接退出，需要报告出全部的错误，不可以多报。
+
+#### 参考用例
+
+每个用例我们都会输入一个图灵机和一个磁带
+
+```
+​```
+; This example program checks if the input string is a a_nb_n.
+; Input: a string of a's and b's, e.g. 'aaabbb'
+; the finite set of states
+#Q = {0, 1, 2, 3, 4}
+
+; the finite set of input symbols
+#S = {a, b}
+
+; the complete set of tape symbols
+#G = {a, b, _}
+
+; the start state
+#q0 = 0
+
+; the set of final states
+#F = {4}
+
+#B = _
+
+ #N = 1
+
+; the transition functions
+
+; State 0: start state
+#D 0 a _ r 1
+#D 0 _ _ r 4
+
+; State 1:
+#D 1 a a r 1
+#D 1 b b r 1
+#D 1 _ _ l 2
+
+; State 2:
+#D 2 b _ l 3
+
+; State 3:
+#D 3 a a l 3
+#D 3 b b l 3
+#D 3 _ _ r 0
+​```
+```
+
+如果给出的磁带是`___aaabbb___`，最后磁带会变成`________`，并且图灵机处于终止态
+
+如果给出的磁带是`___b____`，最后磁带会变成`___b____`，并且图灵机处于终止态
+
+如果给出的磁带是`___aaabb___`，最后磁带会变成`___________`，并且图灵机处于状态2，因为无路可走而halts
+
+如果给出的磁带是`___cccaaabbb___`，标准错误流中输出`Error: 1`，图灵机处于初始状态
+
+#### 代码指导
+
+```
+.
+├── main
+│   ├── java
+│   │   └── edu
+│   │       └── nju
+│   │           ├── Executor.java
+│   │           ├── IOUtils.java
+│   │           ├── Tape.java
+│   │           ├── Track.java
+│   │           ├── TransitionFunction.java
+│   │           └── TuringMachine.java
+│   └── resources
+└── test
+    └── java
+        ├── ExecutorTest.java
+        ├── IOUtils.java
+        └── TMTest.java
+```
+
+本次实验虽然不会考察大家代码执行的效率，但是希望大家能够自行设计一种数据结构，可以根据传入的q和Z，在O(1)的时间复杂度中寻找到对应的迁移函数，在实验二中不会再执行实验一的用例，所以实验一中图灵机的两个构造方法里我们只会使用从字符串构造图灵机的方法。大家可以自行修改图灵机中使用的数据结构。
+
+当然，得益于Java本身自带了很多库，在不改变原有代码结构的情况下也可以做到O(1)的查询速度。因为大家只需要实现一个构造函数和一个方法，所以这次作业自定义的程度比较高，大家可以根据自己的想法实现。如果大家想要自己构思一个结构的话，建议大家遵守面向对象设计原则，把高内聚低耦合放在心上，做好数据和职责的一致性。
 

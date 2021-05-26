@@ -1,12 +1,13 @@
 package edu.nju;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * @Author: pkun
  * @CreateTime: 2021-05-23 19:56
  */
-public class IOUtils {
+public class Utils {
     public static String SetToString(String name, Set<?> set) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("#").append(name).append(" = {");
@@ -37,5 +38,18 @@ public class IOUtils {
         return s.charAt(0) == ';';
     }
 
+    public static boolean isSubSet(Set<?> small, Set<?> big) {
+        boolean ret = false;
+        for(Object o : small) {
+            ret |= !big.contains(o);
+        }
+        return !ret;
+    }
+
+    public static Set<Character> stringToCharSet(String s) {
+        Set<Character> set = new HashSet<>();
+        for(char c : s.toCharArray()) set.add(c);
+        return set;
+    }
 
 }

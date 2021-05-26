@@ -48,34 +48,34 @@ public class TuringMachine {
             i++;
             s = s.trim();
             String[] res;
-            if (s.length() != 0 && !IOUtils.IsComment(s)) {
+            if (s.length() != 0 && !Utils.IsComment(s)) {
                 switch (s.substring(0, 2)) {
                     case "#Q":
                         Q = new HashSet<>();
-                        res = IOUtils.SplitString(s);
-                        if(res == null) System.err.println("Error: " + i);
+                        res = Utils.SplitString(s);
+                        if (res == null) System.err.println("Error: " + i);
                         else Q.addAll(Arrays.asList(res));
                         break;
                     case "#S":
                         S = new HashSet<>();
-                        res = IOUtils.SplitString(s);
-                        if(res == null) System.err.println("Error: " + i);
+                        res = Utils.SplitString(s);
+                        if (res == null) System.err.println("Error: " + i);
                         else Arrays.asList(res).forEach(s1 -> S.add(s1.charAt(0)));
                         break;
                     case "#G":
                         G = new HashSet<>();
-                        res = IOUtils.SplitString(s);
-                        if(res == null) System.err.println("Error: " + i);
+                        res = Utils.SplitString(s);
+                        if (res == null) System.err.println("Error: " + i);
                         else Arrays.asList(res).forEach(s1 -> G.add(s1.charAt(0)));
                         break;
                     case "#F":
                         F = new HashSet<>();
-                        res = IOUtils.SplitString(s);
-                        if(res == null) System.err.println("Error: " + i);
+                        res = Utils.SplitString(s);
+                        if (res == null) System.err.println("Error: " + i);
                         else F.addAll(Arrays.asList(res));
                         break;
                     case "#q":
-                        if(s.charAt(2) != '0') System.err.println("Error: "+ i);
+                        if (s.charAt(2) != '0') System.err.println("Error: " + i);
                         else q = s.split(" ")[2];
                         break;
                     case "#B":
@@ -87,8 +87,27 @@ public class TuringMachine {
                     case "#D":
                         s = s.substring(3);
                         res = s.split(" ");
-                        if(res[1].length() != res[2].length()) System.err.println("Error: "+i);
-                        else Delta.add(new TransitionFunction(s));
+                        if (res[1].length() != res[2].length()) System.err.println("Error: " + i);
+                        else {
+                            assert Q != null;
+                            if (!Q.contains(res[0])) {
+                                System.err.println("Error: 7");
+                                break;
+                            }
+                            if (!Q.contains(res[4])) {
+                                System.err.println("Error: 7");
+                                break;
+                            }
+                            if (!S.containsAll(Utils.stringToCharSet(res[1]))) {
+                                System.err.println("Error: 8");
+                                break;
+                            }
+                            if (!S.containsAll(Utils.stringToCharSet(res[2]))) {
+                                System.err.println("Error: 8");
+                                break;
+                            }
+                        }
+                        Delta.add(new TransitionFunction(s));
                         break;
                     default:
                         System.err.println("Error: " + i);
@@ -96,14 +115,19 @@ public class TuringMachine {
                 }
             }
         }
-        if(Q==null) System.err.println("Error: lack Q");
-        if(S==null) System.err.println("Error: lack S");
-        if(G==null) System.err.println("Error: lack G");
-        if(F==null) System.err.println("Error: lack F");
-        if(q==null) System.err.println("Error: lack q0");
-        if(B==null) System.err.println("Error: lack B");
-        if(tapeNum==null) System.err.println("Error: lack N");
-        if(Delta.size()==0) System.err.println("Error: lack D");
+        assert F != null;
+        if (Utils.isSubSet(F, Q)) System.err.println("Error: 3");
+        if (S.contains(B)) System.err.println("Error: 4");
+        if (!G.contains(B)) System.err.println("Error: 5");
+        if (Utils.isSubSet(S, G)) System.err.println("Error: 6");
+        if (Q == null) System.err.println("Error: lack Q");
+        if (S == null) System.err.println("Error: lack S");
+        if (G == null) System.err.println("Error: lack G");
+        if (F == null) System.err.println("Error: lack F");
+        if (q == null) System.err.println("Error: lack q0");
+        if (B == null) System.err.println("Error: lack B");
+        if (tapeNum == null) System.err.println("Error: lack N");
+        if (Delta.size() == 0) System.err.println("Error: lack D");
 
     }
 
@@ -114,7 +138,7 @@ public class TuringMachine {
     //TODO
     public ArrayList<String> delta(String q, ArrayList<String> Z) {
         ArrayList<String> pYD = null;
-        
+
         return null;
     }
 
@@ -131,15 +155,15 @@ public class TuringMachine {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(IOUtils.SetToString("Q", Q));
-        stringBuilder.append(IOUtils.SetToString("S", S));
-        stringBuilder.append(IOUtils.SetToString("G", G));
-        stringBuilder.append(IOUtils.SetToString("F", F));
+        stringBuilder.append(Utils.SetToString("Q", Q));
+        stringBuilder.append(Utils.SetToString("S", S));
+        stringBuilder.append(Utils.SetToString("G", G));
+        stringBuilder.append(Utils.SetToString("F", F));
         stringBuilder.append("#q0 = ").append(q).append(System.lineSeparator());
         stringBuilder.append("#B = ").append(B).append(System.lineSeparator());
         stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
         Delta.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
-        stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         return stringBuilder.toString();
     }
 }

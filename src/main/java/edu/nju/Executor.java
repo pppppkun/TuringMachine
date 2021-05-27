@@ -32,10 +32,10 @@ public class Executor {
     //TODO
     public void LoadTape(ArrayList<Tape> tapes) {
         tm.checkTapeNum(tapes.size());
-        for(Tape t : tapes) {
+        for (Tape t : tapes) {
             HashSet<Character> set = new HashSet<>();
-            for(StringBuilder s : t.tracks) {
-                for(char c : s.toString().toCharArray()) set.add(c);
+            for (StringBuilder s : t.tracks) {
+                for (char c : s.toString().toCharArray()) set.add(c);
             }
             tm.checkTape(set);
         }
@@ -71,16 +71,17 @@ public class Executor {
                 int start = -1;
                 int end = -1;
                 for (int j = 0; j < track.length(); j++) {
-                    if(track.charAt(j) == tm.getB() && stateRecord == 0) stateRecord = 1;
-                    if(track.charAt(j) != tm.getB() && stateRecord == 1) {
+                    if (track.charAt(j) == tm.getB() && stateRecord == 0) stateRecord = 1;
+                    if (track.charAt(j) != tm.getB() && stateRecord == 1) {
                         stateRecord = 2;
                         start = j;
                     }
-                    if(track.charAt(j) != tm.getB() && stateRecord == 2) {
+                    if (track.charAt(j) != tm.getB() && stateRecord == 2) {
                         end = j;
                     }
                 }
-                track = track.substring(start , end);
+                if (start == end && start == -1) track = "";
+                else track = track.substring(start, end + 1);
                 stringBuilder.append("Track").append(trackNum).append(spaceString(colonIndex - ("Track" + trackNum++).length())).append(": ").append(track).append(System.lineSeparator());
             }
             stringBuilder.append("Head").append(tapeNum).append(spaceString(colonIndex - ("Head" + tapeNum).length())).append(": ").append(t.getHead()).append(System.lineSeparator());
@@ -148,8 +149,10 @@ public class Executor {
         tracks.add(new StringBuilder("____aaabbb___"));
         tapes.add(new Tape(tracks, 4));
         Executor executor = new Executor(tm, tapes);
-        executor.execute();
-        System.out.println(executor.snapShot());
+        while (!tm.isStop(executor.snapshotTape())) {
+            executor.execute();
+            System.out.println(executor.snapShot());
+        }
     }
 
 

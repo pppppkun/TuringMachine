@@ -1,6 +1,7 @@
 package edu.nju;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * @Author: pkun
@@ -30,6 +31,14 @@ public class Executor {
 
     //TODO
     public void LoadTape(ArrayList<Tape> tapes) {
+        tm.checkTapeNum(tapes.size());
+        for(Tape t : tapes) {
+            HashSet<Character> set = new HashSet<>();
+            for(StringBuilder s : t.tracks) {
+                for(char c : s.toString().toCharArray()) set.add(c);
+            }
+            tm.checkTape(set);
+        }
         this.tapes = tapes;
     }
 

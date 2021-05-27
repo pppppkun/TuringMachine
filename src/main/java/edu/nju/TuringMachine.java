@@ -22,6 +22,8 @@ public class TuringMachine {
     private Character B;
     // 磁带数
     private Integer tapeNum;
+    // 磁道数
+    private ArrayList<Integer> trackNum;
     // 迁移函数集
     private Map<TransitionFunction, TransitionFunction> Delta;
 

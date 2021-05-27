@@ -49,11 +49,11 @@ public class Executor {
     }
 
     private void updateTape(String newTapes) {
-
+        for(int i = 0;i<tapes.size();i++) tapes.get(i).updateTape(newTapes);
     }
 
     private void moveHeads(String direction) {
-
+        for(int i = 0;i<tapes.size();i++) tapes.get(i).updateHead(direction.charAt(i));
     }
 
     public static void main(String[] args) {
@@ -97,8 +97,8 @@ public class Executor {
                 "#D 3 b b l 3\n" +
                 "#D 3 _ _ r 0");
         ArrayList<Tape> tapes = new ArrayList<>();
-        ArrayList<String> tracks = new ArrayList<>();
-        tracks.add("____aaabbb___");
+        ArrayList<StringBuilder> tracks = new ArrayList<>();
+        tracks.add(new StringBuilder("____aaabbb___"));
         tapes.add(new Tape(tracks, 4));
         Executor executor = new Executor(tm, tapes);
         executor.execute();

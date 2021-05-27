@@ -10,6 +10,7 @@ public class Executor {
 
     ArrayList<Tape> tapes;
     TuringMachine tm;
+    int steps = 0;
 
     Executor(TuringMachine tm, ArrayList<Tape> tapes) {
         this.tm = tm;
@@ -19,11 +20,10 @@ public class Executor {
     //TODO
     public ArrayList<Tape> execute() {
         String Z = snapshotTape();
-        while (!tm.isStop(Z)) {
+        if (!tm.isStop(Z)) {
             ArrayList<String> ret = tm.delta(Z);
             updateTape(ret.get(0));
             moveHeads(ret.get(1));
-            Z = snapshotTape();
         }
         return tapes;
     }
@@ -45,15 +45,53 @@ public class Executor {
 
     //TODO
     public String snapShot() {
-        return null;
+        StringBuilder stringBuilder = new StringBuilder();
+        int maxTrackLen = 0;
+        for (Tape t : tapes) {
+            maxTrackLen = Math.max(maxTrackLen, t.tracks.size());
+        }
+        int colonIndex = Math.max(maxTrackLen + 5, tapes.size() + 4);
+        stringBuilder.append("Step").append(spaceString(colonIndex - 4)).append(":").append(" ").append(steps).append(System.lineSeparator());
+        int tapeNum = 0;
+        for (Tape t : tapes) {
+            stringBuilder.append("Tape").append(tapeNum).append(spaceString(colonIndex - ("Tape" + tapeNum).length())).append(":").append(System.lineSeparator());
+            int trackNum = 0;
+            for (StringBuilder sb : t.tracks) {
+                String track = sb.toString();
+                int stateRecord = 0;
+                int start = -1;
+                int end = -1;
+                for (int j = 0; j < track.length(); j++) {
+                    if(track.charAt(j) == tm.getB() && stateRecord == 0) stateRecord = 1;
+                    if(track.charAt(j) != tm.getB() && stateRecord == 1) {
+                        stateRecord = 2;
+                        start = j;
+                    }
+                    if(track.charAt(j) != tm.getB() && stateRecord == 2) {
+                        end = j;
+                    }
+                }
+                track = track.substring(start , end);
+                stringBuilder.append("Track").append(trackNum).append(spaceString(colonIndex - ("Track" + trackNum++).length())).append(": ").append(track).append(System.lineSeparator());
+            }
+            stringBuilder.append("Head").append(tapeNum).append(spaceString(colonIndex - ("Head" + tapeNum).length())).append(": ").append(t.getHead()).append(System.lineSeparator());
+        }
+        stringBuilder.append("State").append(spaceString(colonIndex - 5)).append(": ").append(tm.getState());
+        return stringBuilder.toString();
+    }
+
+    private String spaceString(int numOfSpace) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < numOfSpace; i++) stringBuilder.append(" ");
+        return stringBuilder.toString();
     }
 
     private void updateTape(String newTapes) {
-        for(int i = 0;i<tapes.size();i++) tapes.get(i).updateTape(newTapes);
+        for (int i = 0; i < tapes.size(); i++) tapes.get(i).updateTape(newTapes);
     }
 
     private void moveHeads(String direction) {
-        for(int i = 0;i<tapes.size();i++) tapes.get(i).updateHead(direction.charAt(i));
+        for (int i = 0; i < tapes.size(); i++) tapes.get(i).updateHead(direction.charAt(i));
     }
 
     public static void main(String[] args) {
@@ -102,6 +140,7 @@ public class Executor {
         tapes.add(new Tape(tracks, 4));
         Executor executor = new Executor(tm, tapes);
         executor.execute();
+        System.out.println(executor.snapShot());
     }
 
 

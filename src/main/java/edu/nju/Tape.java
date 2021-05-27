@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Tape {
 
     ArrayList<StringBuilder> tracks;
-    int head;
+    private int head;
 
     public Tape(ArrayList<StringBuilder> tracks, int head) {
         this.tracks = tracks;
@@ -25,6 +25,10 @@ public class Tape {
     public void updateHead(char c) {
         if (c == 'l') head--;
         else if (c == 'r') head++;
+    }
+
+    public int getHead() {
+        return head;
     }
 
     public void updateTape(String newTape) {

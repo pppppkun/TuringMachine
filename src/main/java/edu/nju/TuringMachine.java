@@ -171,6 +171,10 @@ public class TuringMachine {
         return tapeNum == this.tapeNum;
     }
 
+    public Character getB() {
+        return B;
+    }
+
     //TODO
     @Override
     public String toString() {

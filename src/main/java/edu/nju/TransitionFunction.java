@@ -1,6 +1,5 @@
 package edu.nju;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -80,20 +79,4 @@ public class TransitionFunction {
         return Objects.hash(getFromState(), getInput());
     }
 
-    public static void main(String[] args) {
-        TransitionFunction t = new TransitionFunction("1", "2", "3", "4", "5");
-        TransitionFunction t1 = new TransitionFunction("2", "3", "4", "5", "6");
-        TransitionFunction t2 = new TransitionFunction("3", "4", "5", "6", "7");
-        HashMap<TransitionFunction, TransitionFunction> map = new HashMap<>();
-        map.put(t, t);
-        map.put(t1,t1);
-        map.put(t2,t2);
-        TransitionFunction g = map.get(t);
-        TransitionFunction o = new TransitionFunction();
-        o.setFromState("3");
-        o.setInput("5");
-        TransitionFunction o1 = map.get(o);
-        System.out.println(o.hashCode());
-        System.out.println(t2.hashCode());
-    }
 }

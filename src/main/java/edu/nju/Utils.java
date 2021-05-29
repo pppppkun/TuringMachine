@@ -19,7 +19,7 @@ public class Utils {
 
     //split with { }
     public static String[] SplitString(String s) {
-        int i = 0;
+        int i;
         for (i = 0; i < s.length(); i++) if (s.charAt(i) == '}') break;
         if (i == s.length()) return null;
         for (i = 0; i < s.length(); i++) if (s.charAt(i) == '{') break;

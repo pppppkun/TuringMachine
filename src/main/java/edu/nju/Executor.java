@@ -12,6 +12,7 @@ public class Executor {
     ArrayList<Tape> tapes;
     TuringMachine tm;
     int steps = 0;
+    boolean canRun = true;
 
     public Executor(TuringMachine tm, ArrayList<Tape> tapes) {
         this.tm = tm;
@@ -32,13 +33,13 @@ public class Executor {
 
     //TODO
     public void LoadTape(ArrayList<Tape> tapes) {
-        tm.checkTapeNum(tapes.size());
+        canRun = canRun & tm.checkTapeNum(tapes.size());
         for (Tape t : tapes) {
             HashSet<Character> set = new HashSet<>();
             for (StringBuilder s : t.tracks) {
                 for (char c : s.toString().toCharArray()) set.add(c);
             }
-            tm.checkTape(set);
+            canRun = canRun & tm.checkTape(set);
         }
         this.tapes = tapes;
     }
@@ -65,7 +66,6 @@ public class Executor {
             int trackNum = 0;
             for (StringBuilder sb : t.tracks) {
                 String track = sb.toString();
-                int stateRecord = 0;
                 int start = -1;
                 int end = -1;
                 for (int i = 0; i < track.length(); i++) {

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Tape {
 
     ArrayList<StringBuilder> tracks;
-    private char B;
+    private final char B;
     private int head;
 
     public Tape(ArrayList<StringBuilder> tracks, int head, char B) {

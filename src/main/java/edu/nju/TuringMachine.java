@@ -27,10 +27,8 @@ public class TuringMachine {
     private Character B;
     // 磁带数
     private Integer tapeNum;
-    // 磁道数
-    private ArrayList<Integer> trackNum;
     // 迁移函数集
-    private Map<TransitionFunction, TransitionFunction> Delta;
+    private final Map<TransitionFunction, TransitionFunction> Delta;
 
     public TuringMachine(Set<String> Q, Set<Character> S, Set<Character> G, String q, Set<String> F, char B, int tapeNum, Set<TransitionFunction> Delta) {
         this.Q = Q;
@@ -212,7 +210,7 @@ public class TuringMachine {
         StringBuilder index = new StringBuilder();
         for (int i = 0; i < var2.length(); i++) {
             if (var2.charAt(i) == '$') {
-                index.append("$ ").append(var2.substring(i + 2, var2.indexOf("}", i + 1)));
+                index.append("$ ").append(var2, i + 2, var2.indexOf("}", i + 1));
                 i = i + var2.indexOf("}", i + 1);
             } else if (var2.charAt(i) == '[') {
                 int flag1 = 0;
@@ -230,7 +228,7 @@ public class TuringMachine {
                     flag2 = 1;
                     i = var2.indexOf("}", i + 1) + 1;
                 } else i = i + 2;
-                int res = 0;
+                int res;
                 if (flag1 == 1 || flag2 == 1) {
                     index.append("c ");
                     if (flag1 == 1) index.append("$ ").append(operand1).append(" ");
@@ -322,9 +320,9 @@ public class TuringMachine {
 
     private ArrayList<StringBuilder> resolverExpect(ArrayList<StringBuilder> have, Set<Character> temp_set) {
         ArrayList<StringBuilder> copy_input = new ArrayList<>();
-        for (int i = 0; i < have.size(); i++) {
+        for (StringBuilder builder : have) {
             for (char c : temp_set) {
-                StringBuilder stringBuilder = new StringBuilder(have.get(i));
+                StringBuilder stringBuilder = new StringBuilder(builder);
                 stringBuilder.append(c);
                 copy_input.add(stringBuilder);
             }

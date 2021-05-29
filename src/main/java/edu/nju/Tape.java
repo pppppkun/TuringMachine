@@ -12,9 +12,10 @@ public class Tape {
     private char B;
     private int head;
 
-    public Tape(ArrayList<StringBuilder> tracks, int head) {
+    public Tape(ArrayList<StringBuilder> tracks, int head, char B) {
         this.tracks = tracks;
         this.head = head;
+        this.B = B;
     }
 
     public String snapShot() {
@@ -32,7 +33,7 @@ public class Tape {
         }
         else {
             for(StringBuilder s : tracks) {
-                if(head == s.length()-1) s.append(B);
+                if(head == s.length()) s.append(B);
             }
         }
     }

@@ -1,5 +1,10 @@
 package edu.nju;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -36,7 +41,7 @@ public class TuringMachine {
         this.B = B;
         this.tapeNum = tapeNum;
         this.Delta = new HashMap<>();
-        for(TransitionFunction t : Delta) {
+        for (TransitionFunction t : Delta) {
             this.Delta.put(t, t);
         }
 //        this.Delta = Delta;
@@ -90,29 +95,7 @@ public class TuringMachine {
                         break;
                     case "#D":
                         s = s.substring(3);
-                        res = s.split(" ");
-                        if (res[1].length() != res[2].length()) System.err.println("Error: " + i);
-                        else {
-                            assert Q != null;
-                            if (!Q.contains(res[0])) {
-                                System.err.println("Error: 7");
-                                break;
-                            }
-                            if (!Q.contains(res[4])) {
-                                System.err.println("Error: 7");
-                                break;
-                            }
-                            if (!G.containsAll(Utils.stringToCharSet(res[1]))) {
-                                System.err.println("Error: 8");
-                                break;
-                            }
-                            if (!G.containsAll(Utils.stringToCharSet(res[2]))) {
-                                System.err.println("Error: 8");
-                                break;
-                            }
-                        }
-                        TransitionFunction transitionFunction = new TransitionFunction(s);
-                        Delta.put(transitionFunction, transitionFunction);
+                        resolverTransitionFunction(s, i);
                         break;
                     default:
                         System.err.println("Error: " + i);
@@ -160,20 +143,195 @@ public class TuringMachine {
     }
 
     public boolean checkTape(Set<Character> tape) {
-        if(!G.containsAll(tape)) {
+        if (!G.containsAll(tape)) {
             System.err.println("Error: 1");
             return false;
         }
         return true;
     }
 
-    public boolean checkTapeNum(int tapeNum){
+    public boolean checkTapeNum(int tapeNum) {
         return tapeNum == this.tapeNum;
     }
 
     public Character getB() {
         return B;
     }
+
+    private void resolverTransitionFunction(String s, int lineno) {
+        ArrayList<StringBuilder> input = new ArrayList<>();
+        String[] output;
+        input.add(new StringBuilder());
+        String[] var = s.split(" ");
+        String var2 = var[1];
+        for (int i = 0; i < var2.length(); i++) {
+            if (var2.charAt(i) == '!') {
+                if (var2.charAt(i + 1) == '{') {
+                    int j = i + 2;
+                    for (; j < var2.length(); j++) {
+                        if (var2.charAt(j) == '}') {
+                            break;
+                        }
+                    }
+                    String[] chars = var2.substring(i + 2, j).split(",");
+                    Set<Character> temp_set = new HashSet<>(G);
+                    i = j;
+                    for (j = 0; j < chars.length; j++) temp_set.remove(chars[j].charAt(0));
+                    input = resolverExpect(input, temp_set);
+                } else {
+                    char expect_char = var2.charAt(i + 1);
+                    input = resolverExpect(expect_char, input);
+                    i = i + 1;
+                }
+            } else if (var2.charAt(i) == '[') {
+                char operand1 = var2.charAt(i + 1);
+                char op = var2.charAt(i + 2);
+                char operand2 = var2.charAt(i + 3);
+                i = i + 4;
+                for (StringBuilder sb : input) sb.append(eval(Integer.parseInt(operand1+""), Integer.parseInt(operand2+""), op));
+            }
+            else if (var2.charAt(i) == '{')
+            {
+                int j = i + 1;
+                for (; j < var2.length(); j++) {
+                    if (var2.charAt(j) == '}') {
+                        break;
+                    }
+                }
+                String[] chars = var2.substring(i + 1, j).split(",");
+                i = j;
+                Set<Character> temp_set = new HashSet<>();
+                for(String c : chars) temp_set.add(c.charAt(0));
+                input = resolverExpect(input, temp_set);
+            }
+            else {
+                for (StringBuilder sb : input) sb.append(var2.charAt(i));
+            }
+        }
+        var2 = var[2];
+        StringBuilder index = new StringBuilder();
+        for (int i = 0; i < var2.length(); i++) {
+            if (var2.charAt(i) == '$') {
+                index.append("$ ").append(var2.substring(i + 2, var2.indexOf("}", i + 1)));
+                i = i + var2.indexOf("}", i + 1);
+            } else if (var2.charAt(i) == '[') {
+                int flag1 = 0;
+                int flag2 = 0;
+                String operand1 = var2.charAt(i + 1) + "";
+                if (var2.charAt(i + 1) == '$') {
+                    operand1 = var2.substring(i + 3, var2.indexOf("}", i + 1));
+                    flag1 = 1;
+                    i = var2.indexOf("}", i + 1) + 1;
+                } else i = i + 2;
+                char op = var2.charAt(i);
+                String operand2 = var2.charAt(i + 1) + "";
+                if (var2.charAt(i + 1) == '$') {
+                    operand2 = var2.substring(i + 3, var2.indexOf("}", i + 1));
+                    flag2 = 1;
+                    i = var2.indexOf("}", i + 1) + 1;
+                } else i = i + 2;
+                int res = 0;
+                if (flag1 == 1 || flag2 == 1) {
+                    index.append("c ");
+                    if (flag1 == 1) index.append("$ ").append(operand1).append(" ");
+                    else index.append(operand1).append(" ");
+                    index.append(op).append(" ");
+                    if (flag2 == 1) index.append("$ ").append(operand2).append(" ");
+                    else index.append(operand2).append(" ");
+                } else {
+                    res = eval(Integer.parseInt(operand1), Integer.parseInt(operand2), op);
+                    index.append(res);
+                }
+            } else {
+                index.append(var2.charAt(i));
+            }
+            if (i != var2.length()) index.append(System.lineSeparator());
+        }
+        output = index.toString().split(System.lineSeparator());
+        for (StringBuilder sb : input) {
+            StringBuilder out = new StringBuilder();
+            out.append(var[0]).append(" ");
+            out.append(sb.toString()).append(" ");
+            for (String pattern : output) {
+                String[] v = pattern.split(" ");
+                char c = v[0].charAt(0);
+                if (c == '$') out.append(sb.charAt(Integer.parseInt(v[1])));
+                else if (c == 'c') {
+                    ArrayList<Integer> operand = new ArrayList<>();
+                    char op = ' ';
+                    for (int i = 1; i < v.length; i++) {
+                        if (v[i].charAt(0) == '$') {
+//                            out.append(sb.charAt(Integer.parseInt(v[i+1])));
+                            operand.add(Integer.parseInt(sb.charAt(Integer.parseInt(v[i + 1])) + ""));
+                            i = i + 1;
+                        } else if (v[i].charAt(0) == '+' || v[i].charAt(0) == '-' || v[i].charAt(0) == '*' || v[i].charAt(0) == '/') {
+                            op = v[i].charAt(0);
+                        } else operand.add(Integer.parseInt(v[i]));
+                    }
+                    out.append(eval(operand.get(0), operand.get(1), op));
+                } else out.append(c);
+            }
+            out.append(" ").append(var[3]).append(" ").append(var[4]);
+            String[] res = out.toString().split(" ");
+            if (res[1].length() != res[2].length()) {
+                System.err.println("Error: " + lineno);
+                return;
+            }
+            assert Q != null;
+            if (!Q.contains(res[0])) {
+                System.err.println("Error: 7");
+                return;
+            }
+            if (!Q.contains(res[4])) {
+                System.err.println("Error: 7");
+                return;
+            }
+            if (!G.containsAll(Utils.stringToCharSet(res[1]))) {
+                System.err.println("Error: 8");
+                return;
+            }
+            if (!G.containsAll(Utils.stringToCharSet(res[2]))) {
+                System.err.println("Error: 8");
+                return;
+            }
+            TransitionFunction transitionFunction = new TransitionFunction(out.toString());
+            Delta.put(transitionFunction, transitionFunction);
+        }
+    }
+
+    private int eval(int o1, int o2, char op) {
+        switch (op) {
+            case '+':
+                return o1 + o2;
+            case '-':
+                return o1 - o2;
+            case '*':
+                return o1 * o2;
+            case '/':
+                return o1 / o2;
+            default:
+                return 0;
+        }
+    }
+
+    private ArrayList<StringBuilder> resolverExpect(char expect_char, ArrayList<StringBuilder> have) {
+        Set<Character> temp_set = new HashSet<>(G);
+        temp_set.remove(expect_char);
+        return resolverExpect(have, temp_set);
+    }
+
+    private ArrayList<StringBuilder> resolverExpect(ArrayList<StringBuilder> have, Set<Character> temp_set) {
+        ArrayList<StringBuilder> copy_input = new ArrayList<>();
+        for (int i = 0; i < have.size(); i++) {
+            for (char c : temp_set) {
+                StringBuilder stringBuilder = new StringBuilder(have.get(i));
+                stringBuilder.append(c);
+                copy_input.add(stringBuilder);
+            }
+        }
+        return copy_input;
+    }
+
 
     //TODO
     @Override
@@ -190,5 +348,11 @@ public class TuringMachine {
         Delta.values().forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         return stringBuilder.toString();
+    }
+
+    public static void main(String[] args) throws IOException {
+        Path path = Paths.get("TuringMachine/add.tm");
+        TuringMachine tm = new TuringMachine(new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
+        System.out.println(tm);
     }
 }

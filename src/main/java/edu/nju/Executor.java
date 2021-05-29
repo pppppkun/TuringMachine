@@ -13,20 +13,21 @@ public class Executor {
     TuringMachine tm;
     int steps = 0;
 
-    Executor(TuringMachine tm, ArrayList<Tape> tapes) {
+    public Executor(TuringMachine tm, ArrayList<Tape> tapes) {
         this.tm = tm;
         LoadTape(tapes);
     }
 
     //TODO
-    public ArrayList<Tape> execute() {
+    public Boolean execute() {
         String Z = snapshotTape();
         if (!tm.isStop(Z)) {
             ArrayList<String> ret = tm.delta(Z);
             updateTape(ret.get(0));
             moveHeads(ret.get(1));
         }
-        return tapes;
+        steps++;
+        return !tm.isStop(snapshotTape());
     }
 
     //TODO
@@ -45,7 +46,7 @@ public class Executor {
     //TODO
     private String snapshotTape() {
         StringBuilder stringBuilder = new StringBuilder();
-        for(Tape tape : tapes) stringBuilder.append(tape.snapShot());
+        for (Tape tape : tapes) stringBuilder.append(tape.snapShot());
         return stringBuilder.toString();
     }
 
@@ -67,14 +68,16 @@ public class Executor {
                 int stateRecord = 0;
                 int start = -1;
                 int end = -1;
-                for (int j = 0; j < track.length(); j++) {
-                    if (track.charAt(j) == tm.getB() && stateRecord == 0) stateRecord = 1;
-                    if (track.charAt(j) != tm.getB() && stateRecord == 1) {
-                        stateRecord = 2;
-                        start = j;
+                for (int i = 0; i < track.length(); i++) {
+                    if (track.charAt(i) != tm.getB()) {
+                        start = i;
+                        break;
                     }
-                    if (track.charAt(j) != tm.getB() && stateRecord == 2) {
-                        end = j;
+                }
+                for (int i = track.length() - 1; i >= 0; i--) {
+                    if (track.charAt(i) != tm.getB()) {
+                        end = i;
+                        break;
                     }
                 }
                 if (start == end && start == -1) track = "";
@@ -92,7 +95,8 @@ public class Executor {
                     if (track.length() == 1) start = end = t.getHead();
                     stringBuilder.append("Index").append(tapeNum).append(spaceString(colonIndex - ("Index" + tapeNum).length())).append(": ").append(indexHelper(start, end)).append(System.lineSeparator());
                 }
-                stringBuilder.append("Track").append(trackNum).append(spaceString(colonIndex - ("Track" + trackNum++).length())).append(": ").append(formatTrack(track, start, end)).append(System.lineSeparator());
+                stringBuilder.append("Track").append(trackNum).append(spaceString(colonIndex - ("Track" + trackNum).length())).append(": ").append(formatTrack(track, start, end)).append(System.lineSeparator());
+                trackNum++;
             }
             stringBuilder.append("Head").append(tapeNum).append(spaceString(colonIndex - ("Head" + tapeNum).length())).append(": ").append(t.getHead()).append(System.lineSeparator());
             tapeNum++;
@@ -128,7 +132,7 @@ public class Executor {
     private void updateTape(String newTapes) {
         int start = 0;
 //        for (int i = 0; i < tapes.size(); i++) tapes.get(i).updateTape(newTapes.substring(start, start + ));
-        for(Tape t : tapes) {
+        for (Tape t : tapes) {
             t.updateTape(newTapes.substring(start, start + t.tracks.size()));
             start = start + t.tracks.size();
         }
@@ -161,10 +165,10 @@ public class Executor {
         ArrayList<Tape> tapes = new ArrayList<>();
         ArrayList<StringBuilder> tracks = new ArrayList<>();
         tracks.add(new StringBuilder("____aaabbb___"));
-        tapes.add(new Tape(tracks, 4));
+        tapes.add(new Tape(tracks, 4, '_'));
         tracks = new ArrayList<>();
         tracks.add(new StringBuilder("____________"));
-        tapes.add(new Tape(tracks, 1));
+        tapes.add(new Tape(tracks, 1, '_'));
         Executor executor = new Executor(tm, tapes);
         System.out.println(executor.snapShot());
         while (!tm.isStop(executor.snapshotTape())) {

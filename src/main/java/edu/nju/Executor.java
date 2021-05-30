@@ -26,14 +26,15 @@ public class Executor {
             ArrayList<String> ret = tm.delta(Z);
             updateTape(ret.get(0));
             moveHeads(ret.get(1));
+            steps++;
         }
-        steps++;
         return !tm.isStop(snapshotTape());
     }
 
     //TODO
     public void LoadTape(ArrayList<Tape> tapes) {
         canRun = canRun & tm.checkTapeNum(tapes.size());
+        if(!canRun) System.err.println("Error: 2");
         for (Tape t : tapes) {
             HashSet<Character> set = new HashSet<>();
             for (StringBuilder s : t.tracks) {

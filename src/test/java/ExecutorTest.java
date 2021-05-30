@@ -1,9 +1,13 @@
 import edu.nju.Executor;
 import edu.nju.Tape;
 import edu.nju.TuringMachine;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1278,6 +1282,21 @@ public class ExecutorTest {
                     "State : 2"
     };
 
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+
+    @Before
+    public void setUpStreams() {
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+    }
+
+    @After
+    public void cleanUpStreams() {
+        System.setOut(null);
+        System.setErr(null);
+    }
+
     @Test
     public void testCorrectA() throws IOException {
         Path path = Paths.get("TuringMachine/add.tm");
@@ -1767,5 +1786,117 @@ public class ExecutorTest {
             assertEquals(expect[i], actual.get(i));
         }
     }
+
+    /**
+     * error 1,2
+     * @throws IOException
+     */
+    @Test
+    public void testErrorO() throws IOException {
+        Path path = Paths.get("TuringMachine/error1.tm");
+        TuringMachine tm = new TuringMachine(new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
+        ArrayList<Tape> tapes = new ArrayList<>();
+        ArrayList<StringBuilder> tracks = new ArrayList<>();
+        tracks.add(new StringBuilder("zn"));
+        tapes.add(new Tape(tracks, 0, '_'));
+        Executor executor = new Executor(tm, tapes);
+        ArrayList<String> actual = new ArrayList<>(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
+        boolean ret = true;
+        do {
+            ret = executor.execute();
+            actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
+        }while (ret);
+        String[] error = errContent.toString().split(System.lineSeparator());
+        ArrayList<String> errorIndex = new ArrayList<>();
+        errorIndex.add("Error: 1");
+        errorIndex.add("Error: 2");
+        for (String s : error) {
+            if (s.length() == 0) continue;
+            if (errorIndex.contains(s)) errorIndex.remove(s);
+            else {
+                fail();
+            }
+        }
+        if (errorIndex.size() != 0) fail("有错误还未被检测出");
+        errContent.reset();
+    }
+
+    /**
+     * error 3, 4, 5, 6, 7, 8, lack D
+     * @throws IOException
+     */
+    @Test
+    public void testErrorP() throws IOException {
+        Path path = Paths.get("TuringMachine/error2.tm");
+        TuringMachine tm = new TuringMachine(new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
+        ArrayList<Tape> tapes = new ArrayList<>();
+        ArrayList<StringBuilder> tracks = new ArrayList<>();
+        tracks.add(new StringBuilder("aabb"));
+        tapes.add(new Tape(tracks, 0, '_'));
+        Executor executor = new Executor(tm, tapes);
+        ArrayList<String> actual = new ArrayList<>(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
+        boolean ret = true;
+        do {
+            ret = executor.execute();
+            actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
+        }while (ret);
+        String[] error = errContent.toString().split(System.lineSeparator());
+        ArrayList<String> errorIndex = new ArrayList<>();
+        errorIndex.add("Error: 3");
+        errorIndex.add("Error: 4");
+        errorIndex.add("Error: 5");
+        errorIndex.add("Error: 6");
+        errorIndex.add("Error: 8");
+        errorIndex.add("Error: 8");
+        errorIndex.add("Error: 8");
+        errorIndex.add("Error: 8");
+        errorIndex.add("Error: 8");
+        errorIndex.add("Error: 8");
+        errorIndex.add("Error: 7");
+        errorIndex.add("Error: 7");
+        errorIndex.add("Error: 7");
+        for (String s : error) {
+            if (s.length() == 0) continue;
+            if (errorIndex.contains(s)) errorIndex.remove(s);
+            else {
+                fail();
+            }
+        }
+        if (errorIndex.size() != 0) fail("有错误还未被检测出");
+        errContent.reset();
+    }
+
+    @Test
+    public void testErrorQ() throws IOException {
+        Path path = Paths.get("TuringMachine/error3.tm");
+        TuringMachine tm = new TuringMachine(new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
+        ArrayList<Tape> tapes = new ArrayList<>();
+        ArrayList<StringBuilder> tracks = new ArrayList<>();
+        tracks.add(new StringBuilder("3+4"));
+        tapes.add(new Tape(tracks, 0, '_'));
+        Executor executor = new Executor(tm, tapes);
+        ArrayList<String> actual = new ArrayList<>(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
+        boolean ret = true;
+        do {
+            ret = executor.execute();
+            actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
+        }while (ret);
+        String[] error = errContent.toString().split(System.lineSeparator());
+        ArrayList<String> errorIndex = new ArrayList<>();
+        errorIndex.add("Error: 9");
+        errorIndex.add("Error: 9");
+        errorIndex.add("Error: 9");
+        errorIndex.add("Error: 2");
+        for (String s : error) {
+            if (s.length() == 0) continue;
+            if (errorIndex.contains(s)) errorIndex.remove(s);
+            else {
+                fail();
+            }
+        }
+        if (errorIndex.size() != 0) fail("有错误还未被检测出");
+        errContent.reset();
+    }
+
 
 }

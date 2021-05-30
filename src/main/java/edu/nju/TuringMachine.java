@@ -141,7 +141,7 @@ public class TuringMachine {
     }
 
     public boolean checkTape(Set<Character> tape) {
-        if (!G.containsAll(tape)) {
+        if (!S.containsAll(tape)) {
             System.err.println("Error: 1");
             return false;
         }
@@ -293,6 +293,16 @@ public class TuringMachine {
                 return;
             }
             TransitionFunction transitionFunction = new TransitionFunction(out.toString());
+            if(Delta.containsKey(transitionFunction)) {
+                String originalOutput =  Delta.get(transitionFunction).getOutput();
+                String originalToState =  Delta.get(transitionFunction).getToState();
+                String originalDirection =  Delta.get(transitionFunction).getDirection();
+                if(!originalOutput.equals(transitionFunction.getOutput())
+                        || !originalToState.equals(transitionFunction.getToState())
+                        || !originalDirection.equals(transitionFunction.getDirection())) {
+                    System.err.println("Error: 9");
+                }
+            }
             Delta.put(transitionFunction, transitionFunction);
         }
     }

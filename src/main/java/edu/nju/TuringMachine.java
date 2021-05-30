@@ -19,37 +19,39 @@ public class TuringMachine {
     private Set<Character> S;
     // 磁带符号集
     private Set<Character> G;
-    // 初始状态
-    private String q;
+    // Finite State Machine
+    private FiniteStateMachine fsm;
+    // State
+    private State q;
     // 终止状态集
     private Set<String> F;
     // 空格符号
     private Character B;
     // 磁带数
     private Integer tapeNum;
-    // 迁移函数集
-    private final Map<TransitionFunction, TransitionFunction> Delta;
 
     public TuringMachine(Set<String> Q, Set<Character> S, Set<Character> G, String q, Set<String> F, char B, int tapeNum, Set<TransitionFunction> Delta) {
         this.Q = Q;
         this.S = S;
         this.G = G;
-        this.q = q;
         this.F = F;
         this.B = B;
-        this.tapeNum = tapeNum;
-        this.Delta = new HashMap<>();
-        for (TransitionFunction t : Delta) {
-            this.Delta.put(t, t);
+        fsm = new FiniteStateMachine();
+        for(String state : Q) {
+            State temp = new State(state);
+            temp.setQ(state);
+            fsm.putState(temp);
         }
-//        this.Delta = Delta;
+        this.tapeNum = tapeNum;
+        for (TransitionFunction t : Delta) {
+            fsm.getState(t.getFromState()).addTransitionFunction(t);
+        }
     }
 
     //TODO
     public TuringMachine(String tm) {
         String[] var = tm.split("\n");
-//        Delta = new HashSet<>();
-        Delta = new HashMap<>();
+        fsm = new FiniteStateMachine();
         int i = 0;
         for (String s : var) {
             i++;
@@ -57,33 +59,22 @@ public class TuringMachine {
             String[] res;
             if (s.length() != 0 && !Utils.IsComment(s)) {
                 switch (s.substring(0, 2)) {
+                    // TODO
                     case "#Q":
-                        Q = new HashSet<>();
-                        res = Utils.SplitString(s);
-                        if (res == null) System.err.println("Error: " + i);
-                        else Q.addAll(Arrays.asList(res));
+                        createQ(s, i);
                         break;
                     case "#S":
-                        S = new HashSet<>();
-                        res = Utils.SplitString(s);
-                        if (res == null) System.err.println("Error: " + i);
-                        else Arrays.asList(res).forEach(s1 -> S.add(s1.charAt(0)));
+                        createS(s, i);
                         break;
                     case "#G":
-                        G = new HashSet<>();
-                        res = Utils.SplitString(s);
-                        if (res == null) System.err.println("Error: " + i);
-                        else Arrays.asList(res).forEach(s1 -> G.add(s1.charAt(0)));
+                        createG(s, i);
                         break;
                     case "#F":
-                        F = new HashSet<>();
-                        res = Utils.SplitString(s);
-                        if (res == null) System.err.println("Error: " + i);
-                        else F.addAll(Arrays.asList(res));
+                        createF(s, i);
                         break;
                     case "#q":
                         if (s.charAt(2) != '0') System.err.println("Error: " + i);
-                        else q = s.split(" ")[2];
+                        else q = fsm.getState(s.split(" ")[2]);
                         break;
                     case "#B":
                         B = s.split(" ")[2].charAt(0);
@@ -113,31 +104,64 @@ public class TuringMachine {
         if (q == null) System.err.println("Error: lack q0");
         if (B == null) System.err.println("Error: lack B");
         if (tapeNum == null) System.err.println("Error: lack N");
-        if (Delta.size() == 0) System.err.println("Error: lack D");
+        if (fsm.getTransitionFunctions().size() == 0) System.err.println("Error: lack D");
 
     }
 
+    private void createQ(String s, int lineno) {
+        Q = new HashSet<>();
+        String[] res = Utils.SplitString(s);
+        if (res == null) System.err.println("Error: " + lineno);
+        else {
+            Q.addAll(Arrays.asList(res));
+            for(String state : Q) {
+                State temp = new State(state);
+                fsm.putState(temp);
+            }
+        }
+    }
+
+    private void createS(String s, int lineno) {
+        S = new HashSet<>();
+        String[] res = Utils.SplitString(s);
+        res = Utils.SplitString(s);
+        if (res == null) System.err.println("Error: " + lineno);
+        else Arrays.asList(res).forEach(s1 -> S.add(s1.charAt(0)));
+    }
+
+    private void createG(String s, int lineno) {
+        G = new HashSet<>();
+        String[] res = Utils.SplitString(s);
+        if (res == null) System.err.println("Error: " + lineno);
+        else Arrays.asList(res).forEach(s1 -> G.add(s1.charAt(0)));
+    }
+
+    private void createF(String s, int lineno) {
+        F = new HashSet<>();
+        String[] res = Utils.SplitString(s);
+        if (res == null) System.err.println("Error: " + lineno);
+        else F.addAll(Arrays.asList(res));
+    }
+
+
     public String getState() {
-        return q;
+        return q.getQ();
     }
 
     //TODO
     public ArrayList<String> delta(String Z) {
-        TransitionFunction t = chooseDelta(q, Z);
-        q = t.getToState();
+        TransitionFunction t = chooseDelta(Z);
+        q = fsm.getState(t.getToState());
         return new ArrayList<>(Arrays.asList(t.getOutput(), t.getDirection()));
     }
 
-    private TransitionFunction chooseDelta(String q, String Z) {
-        TransitionFunction transitionFunction = new TransitionFunction();
-        transitionFunction.setFromState(q);
-        transitionFunction.setInput(Z);
-        return Delta.get(transitionFunction);
+    private TransitionFunction chooseDelta(String Z) {
+        return q.getDelta().get(Z);
     }
 
     //TODO
     public boolean isStop(String Z) {
-        return F.contains(q) || chooseDelta(q, Z) == null;
+        return F.contains(q.getQ()) || chooseDelta(Z) == null;
     }
 
     public boolean checkTape(Set<Character> tape) {
@@ -293,17 +317,18 @@ public class TuringMachine {
                 return;
             }
             TransitionFunction transitionFunction = new TransitionFunction(out.toString());
-            if(Delta.containsKey(transitionFunction)) {
-                String originalOutput =  Delta.get(transitionFunction).getOutput();
-                String originalToState =  Delta.get(transitionFunction).getToState();
-                String originalDirection =  Delta.get(transitionFunction).getDirection();
+            if(fsm.getState(transitionFunction.getFromState()).getDelta().containsKey(transitionFunction.getInput())) {
+                TransitionFunction temp = fsm.getState(transitionFunction.getFromState()).getDelta().get(transitionFunction.getInput());
+                String originalOutput =  temp.getOutput();
+                String originalToState =  temp.getToState();
+                String originalDirection =  temp.getDirection();
                 if(!originalOutput.equals(transitionFunction.getOutput())
                         || !originalToState.equals(transitionFunction.getToState())
                         || !originalDirection.equals(transitionFunction.getDirection())) {
                     System.err.println("Error: 9");
                 }
             }
-            Delta.put(transitionFunction, transitionFunction);
+            fsm.putTransitionFunction(transitionFunction);
         }
     }
 
@@ -349,11 +374,11 @@ public class TuringMachine {
         stringBuilder.append(Utils.SetToString("S", S));
         stringBuilder.append(Utils.SetToString("G", G));
         stringBuilder.append(Utils.SetToString("F", F));
-        stringBuilder.append("#q0 = ").append(q).append(System.lineSeparator());
+        stringBuilder.append("#q0 = ").append(q.getQ()).append(System.lineSeparator());
         stringBuilder.append("#B = ").append(B).append(System.lineSeparator());
         stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
 //        Delta.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
-        Delta.values().forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
+        fsm.getTransitionFunctions().forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         return stringBuilder.toString();
     }

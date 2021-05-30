@@ -16,23 +16,23 @@ public class Executor {
 
     public Executor(TuringMachine tm, ArrayList<Tape> tapes) {
         this.tm = tm;
-        LoadTape(tapes);
+        loadTape(tapes);
     }
 
     //TODO
     public Boolean execute() {
-        String Z = snapshotTape();
+        String Z = snapShotTape();
         if (!tm.isStop(Z)) {
             ArrayList<String> ret = tm.delta(Z);
             updateTape(ret.get(0));
             moveHeads(ret.get(1));
             steps++;
         }
-        return !tm.isStop(snapshotTape());
+        return !tm.isStop(snapShotTape());
     }
 
     //TODO
-    public void LoadTape(ArrayList<Tape> tapes) {
+    public void loadTape(ArrayList<Tape> tapes) {
         canRun = canRun & tm.checkTapeNum(tapes.size());
         if(!canRun) System.err.println("Error: 2");
         for (Tape t : tapes) {
@@ -46,7 +46,7 @@ public class Executor {
     }
 
     //TODO
-    private String snapshotTape() {
+    private String snapShotTape() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Tape tape : tapes) stringBuilder.append(tape.snapShot());
         return stringBuilder.toString();
@@ -172,7 +172,7 @@ public class Executor {
         tapes.add(new Tape(tracks, 1, '_'));
         Executor executor = new Executor(tm, tapes);
         System.out.println(executor.snapShot());
-        while (!tm.isStop(executor.snapshotTape())) {
+        while (!tm.isStop(executor.snapShotTape())) {
             executor.execute();
             System.out.println(executor.snapShot());
         }

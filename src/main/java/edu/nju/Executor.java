@@ -1,6 +1,7 @@
 package edu.nju;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 /**
@@ -143,40 +144,57 @@ public class Executor {
         for (int i = 0; i < tapes.size(); i++) tapes.get(i).updateHead(direction.charAt(i));
     }
 
+
     public static void main(String[] args) {
-        TuringMachine tm = new TuringMachine("#Q = {1,2,3,4,5}\n" +
+        TuringMachine turingMachine = new TuringMachine("; This example program checks if the input string is a a_nb_n.\n" +
+                "; Input: a string of a's and b's, e.g. 'aaabbb'\n" +
+                "; the finite set of states\n" +
+                "#Q = {0, 1, 2, 3, 4}\n" +
                 "\n" +
-                "#S = {a , b , 1}\n" +
+                "; the finite set of input symbols\n" +
+                "#S = {a, b}\n" +
                 "\n" +
-                "#G = {a , b , 1, _ }\n" +
+                "; the complete set of tape symbols\n" +
+                "#G = {a, b, _}\n" +
                 "\n" +
-                "#q0 = 1\n" +
+                "; the start state\n" +
+                "#q0 = 0\n" +
                 "\n" +
-                "#F = {5}\n" +
+                "; the set of final states\n" +
+                "#F = {4}\n" +
                 "\n" +
                 "#B = _\n" +
                 "\n" +
-                "#N = 2\n" +
+                " #N = 1\n" +
+                "; the transition functions\n" +
                 "\n" +
-                "#D 1 a_ _1 rr 1\n" +
-                "#D 1 b_ __ rl 2\n" +
-                "#D 2 b1 b_ *l 3\n" +
-                "#D 3 b1 __ rl 3\n" +
-                "#D 3 __ __ ** 5");
+                "; State 0: start state\n" +
+                "#D 0 a _ r 1\n" +
+                "#D 0 _ _ r 4\n" +
+                "\n" +
+                "; State 1:\n" +
+                "#D 1 a a r 1\n" +
+                "#D 1 b b r 1\n" +
+                "#D 1 _ _ l 2\n" +
+                "\n" +
+                "; State 2:\n" +
+                "#D 2 b _ l 3\n" +
+                "\n" +
+                "; State 3:\n" +
+                "#D 3 a a l 3\n" +
+                "#D 3 b b l 3\n" +
+                "#D 3 _ _ r 0");
         ArrayList<Tape> tapes = new ArrayList<>();
         ArrayList<StringBuilder> tracks = new ArrayList<>();
-        tracks.add(new StringBuilder("____aaabbb___"));
-        tapes.add(new Tape(tracks, 4, '_'));
-        tracks = new ArrayList<>();
-        tracks.add(new StringBuilder("____________"));
-        tapes.add(new Tape(tracks, 1, '_'));
-        Executor executor = new Executor(tm, tapes);
+        tracks.add(new StringBuilder("___aaabb___"));
+        tapes.add(new Tape(tracks, 3, '_'));
+        Executor executor = new Executor(turingMachine, tapes);
         System.out.println(executor.snapShot());
-        while (!tm.isStop(executor.snapShotTape())) {
-            executor.execute();
+        boolean ret = true;
+        do {
+            ret = executor.execute();
             System.out.println(executor.snapShot());
-        }
-    }
+        }while (ret);    }
 
 
 }

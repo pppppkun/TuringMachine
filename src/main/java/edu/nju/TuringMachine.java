@@ -1,10 +1,5 @@
 package edu.nju;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -20,7 +15,7 @@ public class TuringMachine {
     // 磁带符号集
     private Set<Character> G;
     // Finite State Machine
-    private FiniteStateMachine fsm;
+    private final FiniteStateMachine fsm;
     // State
     private State q;
     // 终止状态集
@@ -42,6 +37,7 @@ public class TuringMachine {
             temp.setQ(state);
             fsm.putState(temp);
         }
+        this.q = fsm.getState(q);
         this.tapeNum = tapeNum;
         for (TransitionFunction t : Delta) {
             fsm.getState(t.getFromState()).addTransitionFunction(t);
@@ -50,13 +46,12 @@ public class TuringMachine {
 
     //TODO
     public TuringMachine(String tm) {
-        String[] var = tm.split("\n");
+        String[] var = tm.split(System.lineSeparator());
         fsm = new FiniteStateMachine();
         int i = 0;
         for (String s : var) {
             i++;
             s = s.trim();
-            String[] res;
             if (s.length() != 0 && !Utils.IsComment(s)) {
                 switch (s.substring(0, 2)) {
                     // TODO
@@ -124,7 +119,6 @@ public class TuringMachine {
     private void createS(String s, int lineno) {
         S = new HashSet<>();
         String[] res = Utils.SplitString(s);
-        res = Utils.SplitString(s);
         if (res == null) System.err.println("Error: " + lineno);
         else Arrays.asList(res).forEach(s1 -> S.add(s1.charAt(0)));
     }
@@ -165,6 +159,7 @@ public class TuringMachine {
     }
 
     public boolean checkTape(Set<Character> tape) {
+        tape.remove(B);
         if (!S.containsAll(tape)) {
             System.err.println("Error: 1");
             return false;
@@ -377,15 +372,9 @@ public class TuringMachine {
         stringBuilder.append("#q0 = ").append(q.getQ()).append(System.lineSeparator());
         stringBuilder.append("#B = ").append(B).append(System.lineSeparator());
         stringBuilder.append("#N = ").append(tapeNum).append(System.lineSeparator());
-//        Delta.forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
         fsm.getTransitionFunctions().forEach(transitionFunction -> stringBuilder.append(transitionFunction.toString()));
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         return stringBuilder.toString();
     }
 
-    public static void main(String[] args) throws IOException {
-        Path path = Paths.get("TuringMachine/add.tm");
-        TuringMachine tm = new TuringMachine(new String(Files.readAllBytes(path), StandardCharsets.UTF_8));
-        System.out.println(tm);
-    }
 }

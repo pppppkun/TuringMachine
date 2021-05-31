@@ -37,16 +37,8 @@ public class TransitionFunction {
         return fromState;
     }
 
-    public void setFromState(String fromState) {
-        this.fromState = fromState;
-    }
-
     public String getInput() {
         return input;
-    }
-
-    public void setInput(String input) {
-        this.input = input;
     }
 
     public String getToState() {

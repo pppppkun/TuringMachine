@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  */
 public class ExecutorTest {
 
-    String[] expects = new String[] {
+    String[] expects = new String[]{
             "Step  : 0\n" +
                     "Tape0 :\n" +
                     "Index0: 4 5 6 7 8 9\n" +
@@ -1349,6 +1349,7 @@ public class ExecutorTest {
                 "#D get_num 2_ 11 *r get_num";
         ArrayList<String> expect = new ArrayList<>(Arrays.asList(res.split("\n")));
         ArrayList<String> actual = new ArrayList<>(Arrays.asList(tm.toString().split(System.lineSeparator())));
+        if (errContent.size() != 0) fail();
         for (String s : expect) {
             if (!actual.contains(s)) {
                 fail("结果不包含: " + s);
@@ -1423,6 +1424,7 @@ public class ExecutorTest {
                 "#D mul *9 =9 r* mul";
         ArrayList<String> expect = new ArrayList<>(Arrays.asList(res.split("\n")));
         ArrayList<String> actual = new ArrayList<>(Arrays.asList(tm.toString().split(System.lineSeparator())));
+        if (errContent.size() != 0) fail();
         for (String s : expect) {
             if (!actual.contains(s)) {
                 fail("结果不包含: " + s);
@@ -1452,6 +1454,7 @@ public class ExecutorTest {
                 "#D 0 9 8 * 1";
         ArrayList<String> expect = new ArrayList<>(Arrays.asList(res.split("\n")));
         ArrayList<String> actual = new ArrayList<>(Arrays.asList(tm.toString().split(System.lineSeparator())));
+        if (errContent.size() != 0) fail();
         for (String s : expect) {
             if (!actual.contains(s)) {
                 fail("结果不包含: " + s);
@@ -1545,6 +1548,7 @@ public class ExecutorTest {
                 "#D write _4 4_ lr write";
         ArrayList<String> expect = new ArrayList<>(Arrays.asList(res.split("\n")));
         ArrayList<String> actual = new ArrayList<>(Arrays.asList(tm.toString().split(System.lineSeparator())));
+        if (errContent.size() != 0) fail();
         for (String s : expect) {
             if (!actual.contains(s)) {
                 fail("结果不包含: " + s);
@@ -1569,10 +1573,11 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
+        if (errContent.size() != 0) fail();
         String[] expect = expects[0].split("\n");
-        if(expect.length != actual.size()) fail();
-        for(int i = 0;i<expect.length;i++) {
+        if (expect.length != actual.size()) fail();
+        for (int i = 0; i < expect.length; i++) {
             assertEquals(expect[i], actual.get(i));
         }
     }
@@ -1594,10 +1599,11 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
+        if (errContent.size() != 0) fail();
         String[] expect = expects[1].split("\n");
-        if(expect.length != actual.size()) fail();
-        for(int i = 0;i<expect.length;i++) {
+        if (expect.length != actual.size()) fail();
+        for (int i = 0; i < expect.length; i++) {
             assertEquals(expect[i], actual.get(i));
         }
     }
@@ -1619,10 +1625,11 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
+        if (errContent.size() != 0) fail();
         String[] expect = expects[2].split("\n");
-        if(expect.length != actual.size()) fail();
-        for(int i = 0;i<expect.length;i++) {
+        if (expect.length != actual.size()) fail();
+        for (int i = 0; i < expect.length; i++) {
             assertEquals(expect[i], actual.get(i));
         }
     }
@@ -1641,10 +1648,11 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
+        if (errContent.size() != 0) fail();
         String[] expect = expects[3].split("\n");
-        if(expect.length != actual.size()) fail();
-        for(int i = 0;i<expect.length;i++) {
+        if (expect.length != actual.size()) fail();
+        for (int i = 0; i < expect.length; i++) {
             assertEquals(expect[i], actual.get(i));
         }
     }
@@ -1666,10 +1674,11 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
+        if (errContent.size() != 0) fail();
         String[] expect = expects[4].split("\n");
-        if(expect.length != actual.size()) fail();
-        for(int i = 0;i<expect.length;i++) {
+        if (expect.length != actual.size()) fail();
+        for (int i = 0; i < expect.length; i++) {
             assertEquals(expect[i], actual.get(i));
         }
     }
@@ -1691,10 +1700,11 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
+        if (errContent.size() != 0) fail();
         String[] expect = expects[7].split("\n");
-        if(expect.length != actual.size()) fail();
-        for(int i = 0;i<expect.length;i++) {
+        if (expect.length != actual.size()) fail();
+        for (int i = 0; i < expect.length; i++) {
             assertEquals(expect[i], actual.get(i));
         }
     }
@@ -1713,10 +1723,11 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
+        if (errContent.size() != 0) fail();
         String[] expect = expects[5].split("\n");
-        if(expect.length != actual.size()) fail();
-        for(int i = 0;i<expect.length;i++) {
+        if (expect.length != actual.size()) fail();
+        for (int i = 0; i < expect.length; i++) {
             assertEquals(expect[i], actual.get(i));
         }
     }
@@ -1735,10 +1746,11 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
+        if (errContent.size() != 0) fail();
         String[] expect = expects[6].split("\n");
-        if(expect.length != actual.size()) fail();
-        for(int i = 0;i<expect.length;i++) {
+        if (expect.length != actual.size()) fail();
+        for (int i = 0; i < expect.length; i++) {
             assertEquals(expect[i], actual.get(i));
         }
     }
@@ -1757,10 +1769,11 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
+        if (errContent.size() != 0) fail();
         String[] expect = expects[8].split("\n");
-        if(expect.length != actual.size()) fail();
-        for(int i = 0;i<expect.length;i++) {
+        if (expect.length != actual.size()) fail();
+        for (int i = 0; i < expect.length; i++) {
             assertEquals(expect[i], actual.get(i));
         }
     }
@@ -1779,16 +1792,18 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
+        if (errContent.size() != 0) fail();
         String[] expect = expects[9].split("\n");
-        if(expect.length != actual.size()) fail();
-        for(int i = 0;i<expect.length;i++) {
+        if (expect.length != actual.size()) fail();
+        for (int i = 0; i < expect.length; i++) {
             assertEquals(expect[i], actual.get(i));
         }
     }
 
     /**
      * error 1,2
+     *
      * @throws IOException
      */
     @Test
@@ -1805,7 +1820,7 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
         String[] error = errContent.toString().split(System.lineSeparator());
         ArrayList<String> errorIndex = new ArrayList<>();
         errorIndex.add("Error: 1");
@@ -1823,6 +1838,7 @@ public class ExecutorTest {
 
     /**
      * error 3, 4, 5, 6, 7, 8, lack D
+     *
      * @throws IOException
      */
     @Test
@@ -1839,7 +1855,7 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
         String[] error = errContent.toString().split(System.lineSeparator());
         ArrayList<String> errorIndex = new ArrayList<>();
         errorIndex.add("Error: 3");
@@ -1880,7 +1896,7 @@ public class ExecutorTest {
         do {
             ret = executor.execute();
             actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        }while (ret);
+        } while (ret);
         String[] error = errContent.toString().split(System.lineSeparator());
         ArrayList<String> errorIndex = new ArrayList<>();
         errorIndex.add("Error: 9");

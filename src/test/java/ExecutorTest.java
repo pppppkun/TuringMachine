@@ -1815,12 +1815,6 @@ public class ExecutorTest {
         tracks.add(new StringBuilder("zn"));
         tapes.add(new Tape(tracks, 0, '_'));
         Executor executor = new Executor(tm, tapes);
-        ArrayList<String> actual = new ArrayList<>(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        boolean ret = true;
-        do {
-            ret = executor.execute();
-            actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        } while (ret);
         String[] error = errContent.toString().split(System.lineSeparator());
         ArrayList<String> errorIndex = new ArrayList<>();
         errorIndex.add("Error: 1");
@@ -1850,27 +1844,34 @@ public class ExecutorTest {
         tracks.add(new StringBuilder("aabb"));
         tapes.add(new Tape(tracks, 0, '_'));
         Executor executor = new Executor(tm, tapes);
-        ArrayList<String> actual = new ArrayList<>(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        boolean ret = true;
-        do {
-            ret = executor.execute();
-            actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        } while (ret);
         String[] error = errContent.toString().split(System.lineSeparator());
         ArrayList<String> errorIndex = new ArrayList<>();
         errorIndex.add("Error: 3");
         errorIndex.add("Error: 4");
         errorIndex.add("Error: 5");
         errorIndex.add("Error: 6");
-        errorIndex.add("Error: 8");
-        errorIndex.add("Error: 8");
-        errorIndex.add("Error: 8");
-        errorIndex.add("Error: 8");
-        errorIndex.add("Error: 8");
-        errorIndex.add("Error: 8");
-        errorIndex.add("Error: 7");
-        errorIndex.add("Error: 7");
-        errorIndex.add("Error: 7");
+        String temp = "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 7\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 7\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 7\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 8\n" +
+                "Error: 8";
+        errorIndex.addAll(Arrays.asList(temp.split("\n")));
         for (String s : error) {
             if (s.length() == 0) continue;
             if (errorIndex.contains(s)) errorIndex.remove(s);
@@ -1891,12 +1892,6 @@ public class ExecutorTest {
         tracks.add(new StringBuilder("3+4"));
         tapes.add(new Tape(tracks, 0, '_'));
         Executor executor = new Executor(tm, tapes);
-        ArrayList<String> actual = new ArrayList<>(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        boolean ret = true;
-        do {
-            ret = executor.execute();
-            actual.addAll(Arrays.asList(executor.snapShot().split(System.lineSeparator())));
-        } while (ret);
         String[] error = errContent.toString().split(System.lineSeparator());
         ArrayList<String> errorIndex = new ArrayList<>();
         errorIndex.add("Error: 9");

@@ -1,7 +1,9 @@
 package edu.nju;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -26,11 +28,21 @@ public class State {
         this.q = q;
     }
 
-    public Map<String, TransitionFunction> getDelta() {
-        return delta;
+    public Collection<TransitionFunction> getDeltas() {
+        return delta.values();
+    }
+
+    public boolean containDelta(TransitionFunction transitionFunction) {
+        return delta.containsValue(transitionFunction);
+    }
+
+    public TransitionFunction getDelta(String z) {
+        return delta.get(z);
     }
 
     public void addTransitionFunction(TransitionFunction tf) {
         this.delta.put(tf.getInput(), tf);
     }
+
+
 }

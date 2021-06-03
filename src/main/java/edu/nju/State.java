@@ -3,7 +3,6 @@ package edu.nju;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -43,6 +42,7 @@ public class State {
     public void addTransitionFunction(TransitionFunction tf) {
         this.delta.put(tf.getInput(), tf);
     }
+
 
 
 }

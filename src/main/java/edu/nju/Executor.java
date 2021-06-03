@@ -1,7 +1,6 @@
 package edu.nju;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 
 /**
@@ -20,19 +19,31 @@ public class Executor {
         loadTape(tapes);
     }
 
-    //TODO
+    /**
+     * TODO
+     * 1. 检查能否运行
+     * 2. 调用tm.delta
+     * 3. 更新磁带
+     * 4. 返回下次能否执行
+     * @return
+     */
     public Boolean execute() {
         String Z = snapShotTape();
         if (!tm.isStop(Z)) {
-            ArrayList<String> ret = tm.delta(Z);
-            updateTape(ret.get(0));
-            moveHeads(ret.get(1));
+            TransitionFunction t = tm.delta(Z);
+            updateTape(t.getOutput());
+            moveHeads(t.getDirection());
             steps++;
         }
         return !tm.isStop(snapShotTape());
     }
 
-    //TODO
+    /**
+     * TODO
+     * 1. 检查磁带的数量是否正确 ( checkTapeNum )
+     * 2. 检查磁带上的字符是否是输入符号组的 ( checkTape )
+     * @param tapes
+     */
     public void loadTape(ArrayList<Tape> tapes) {
         canRun = canRun & tm.checkTapeNum(tapes.size());
         if(!canRun) System.err.println("Error: 2");
@@ -46,14 +57,22 @@ public class Executor {
         this.tapes = tapes;
     }
 
-    //TODO
+    /**
+     * TODO
+     * 获取所有磁带的快照，也就是把每个磁带上磁头指向的字符全都收集起来
+     * @return
+     */
     private String snapShotTape() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Tape tape : tapes) stringBuilder.append(tape.snapShot());
         return stringBuilder.toString();
     }
 
-    //TODO
+    /**
+     * TODO
+     * 按照README给出当前图灵机和磁带的快照
+     * @return
+     */
     public String snapShot() {
         StringBuilder stringBuilder = new StringBuilder();
         int maxTrackLen = 0;
@@ -131,15 +150,24 @@ public class Executor {
         return stringBuilder.toString();
     }
 
+    /**
+     * TODO
+     * 不断切割newTapes，传递给每个Tape的updateTape方法
+     * @param newTapes
+     */
     private void updateTape(String newTapes) {
         int start = 0;
-//        for (int i = 0; i < tapes.size(); i++) tapes.get(i).updateTape(newTapes.substring(start, start + ));
         for (Tape t : tapes) {
             t.updateTape(newTapes.substring(start, start + t.tracks.size()));
             start = start + t.tracks.size();
         }
     }
 
+    /**
+     * TODO
+     * 将每个direction里的char都分配给Tape的updateHead方法
+     * @param direction
+     */
     private void moveHeads(String direction) {
         for (int i = 0; i < tapes.size(); i++) tapes.get(i).updateHead(direction.charAt(i));
     }

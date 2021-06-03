@@ -16,7 +16,7 @@ public class TuringMachine {
     private Set<Character> G;
     // 初始状态
     private String q0;
-    // State
+    // 当前状态
     private State q;
     // 终止状态集
     private Set<String> F;
@@ -40,12 +40,15 @@ public class TuringMachine {
         this.q = this.Q.get(q0);
         this.tapeNum = tapeNum;
         for (TransitionFunction t : Delta) {
-            this.Q.get(t.getFromState()).addTransitionFunction(t);
-//            fsm.getState(t.getFromState()).addTransitionFunction(t);
+            this.Q.get(t.getSourceState().getQ()).addTransitionFunction(t);
         }
     }
 
-    //TODO
+    /**
+     * TODO
+     * is done in Lab1 ~
+     * @param tm
+     */
     public TuringMachine(String tm) {
         String[] var = tm.split(System.lineSeparator());
         Q = new HashMap<>();
@@ -55,7 +58,6 @@ public class TuringMachine {
             s = s.trim();
             if (s.length() != 0 && !Utils.IsComment(s)) {
                 switch (s.substring(0, 2)) {
-                    // TODO
                     case "#Q":
                         createQ(s, i);
                         break;
@@ -113,7 +115,7 @@ public class TuringMachine {
         String[] res = Utils.SplitString(s);
         if (res == null) System.err.println("Error: " + lineno);
         else {
-            for (String state : Arrays.asList(res)) {
+            for (String state : res) {
                 State temp = new State(state);
                 Q.put(state, temp);
             }
@@ -146,14 +148,24 @@ public class TuringMachine {
         return q.getQ();
     }
 
-    //TODO
-    public ArrayList<String> delta(String Z) {
+    /**
+     * TODO
+     * 根据当前的状态和输入获取迁移函数，修改状态然后返回
+     * @param Z
+     * @return
+     */
+    public TransitionFunction delta(String Z) {
         TransitionFunction t = q.getDelta(Z);
-        q = Q.get(q.getDelta(Z).getToState());
-        return new ArrayList<>(Arrays.asList(t.getOutput(), t.getDirection()));
+        q = t.getDestinationState();
+        return t;
     }
 
-    //TODO
+    /**
+     * TODO
+     * 停止的两个条件 1. 到了终止态 2. 无路可走，halts
+     * @param Z
+     * @return
+     */
     public boolean isStop(String Z) {
         return F.contains(q.getQ()) || q.getDelta(Z) == null;
     }
@@ -175,173 +187,24 @@ public class TuringMachine {
         return B;
     }
 
+
     private void resolverTransitionFunction(String s, int lineno) {
-        ArrayList<StringBuilder> inputs;
-        String[] outputPattern;
-        String[] var = s.split(" ");
-        String var2 = var[1];
-        inputs = resolverInput(var2);
-        var2 = var[2];
-        outputPattern = resolverOutputPattern(var2).split(System.lineSeparator());
-        for (StringBuilder input : inputs) {
-            String tf = getTransitionFunctionString(var, outputPattern, input.toString());
-            checkTransitionFunction(tf, lineno);
-            TransitionFunction transitionFunction = new TransitionFunction(tf);
-            if (Q.get(transitionFunction.getFromState()).containDelta(transitionFunction)) {
-                TransitionFunction temp = Q.get(transitionFunction.getToState()).getDelta(transitionFunction.getInput());
-                String originalOutput = temp.getOutput();
-                String originalToState = temp.getToState();
-                String originalDirection = temp.getDirection();
-                if (!originalOutput.equals(transitionFunction.getOutput())
-                        || !originalToState.equals(transitionFunction.getToState())
-                        || !originalDirection.equals(transitionFunction.getDirection())) {
-                    System.err.println("Error: 9");
-                }
-            }
-            Q.get(transitionFunction.getFromState()).addTransitionFunction(transitionFunction);
-        }
-    }
-
-    private int eval(int o1, int o2, char op) {
-        switch (op) {
-            case '+':
-                return o1 + o2;
-            case '-':
-                return o1 - o2;
-            case '*':
-                return o1 * o2;
-            case '/':
-                return o1 / o2;
-            default:
-                return 0;
-        }
-    }
-
-    private ArrayList<StringBuilder> resolverInput(String var2){
-        ArrayList<StringBuilder> input = new ArrayList<>();
-        input.add(new StringBuilder());
-        for (int i = 0; i < var2.length(); i++) {
-            if (var2.charAt(i) == '!') {
-                if (var2.charAt(i + 1) == '{') {
-                    int j = i + 2;
-                    for (; j < var2.length(); j++) {
-                        if (var2.charAt(j) == '}') {
-                            break;
-                        }
-                    }
-                    String[] chars = var2.substring(i + 2, j).split(",");
-                    Set<Character> temp_set = new HashSet<>(G);
-                    i = j;
-                    for (j = 0; j < chars.length; j++) temp_set.remove(chars[j].charAt(0));
-                    input = resolverExpect(input, temp_set);
-                } else {
-                    char expect_char = var2.charAt(i + 1);
-                    input = resolverExpect(expect_char, input);
-                    i = i + 1;
-                }
-            } else if (var2.charAt(i) == '[') {
-                char operand1 = var2.charAt(i + 1);
-                char op = var2.charAt(i + 2);
-                char operand2 = var2.charAt(i + 3);
-                i = i + 4;
-                for (StringBuilder sb : input)
-                    sb.append(eval(Integer.parseInt(operand1 + ""), Integer.parseInt(operand2 + ""), op));
-            } else if (var2.charAt(i) == '{') {
-                int j = i + 1;
-                for (; j < var2.length(); j++) {
-                    if (var2.charAt(j) == '}') {
-                        break;
-                    }
-                }
-                String[] chars = var2.substring(i + 1, j).split(",");
-                i = j;
-                Set<Character> temp_set = new HashSet<>();
-                for (String c : chars) temp_set.add(c.charAt(0));
-                input = resolverExpect(input, temp_set);
-            } else {
-                for (StringBuilder sb : input) sb.append(var2.charAt(i));
+        checkTransitionFunction(s, lineno);
+        TransitionFunction transitionFunction = new TransitionFunction(s, Q);
+        if (Q.get(transitionFunction.getSourceState().getQ()).containDelta(transitionFunction)) {
+            TransitionFunction temp = Q.get(transitionFunction.getSourceState().getQ()).getDelta(transitionFunction.getInput());
+            String originalOutput = temp.getOutput();
+            String originalToState = temp.getDestinationState().getQ();
+            String originalDirection = temp.getDirection();
+            if (!originalOutput.equals(transitionFunction.getOutput())
+                    || !originalToState.equals(transitionFunction.getDestinationState().getQ())
+                    || !originalDirection.equals(transitionFunction.getDirection())) {
+                System.err.println("Error: 9");
             }
         }
-        return input;
+        Q.get(transitionFunction.getSourceState().getQ()).addTransitionFunction(transitionFunction);
     }
 
-    private String resolverOutputPattern(String var2) {
-        StringBuilder outputPattern = new StringBuilder();
-        for (int i = 0; i < var2.length(); i++) {
-            if (var2.charAt(i) == '$') {
-                outputPattern.append("$ ").append(var2, i + 2, var2.indexOf("}", i + 1));
-                i = i + var2.indexOf("}", i + 1);
-            } else if (var2.charAt(i) == '[') {
-                int flag1 = 0;
-                int flag2 = 0;
-                // resolver first operand
-                String operand1 = var2.charAt(i + 1) + "";
-                if (var2.charAt(i + 1) == '$') {
-                    operand1 = var2.substring(i + 3, var2.indexOf("}", i + 1));
-                    flag1 = 1;
-                    i = var2.indexOf("}", i + 1) + 1;
-                } else i = i + 2;
-
-                char op = var2.charAt(i);
-                // resolver second operand
-                String operand2 = var2.charAt(i + 1) + "";
-                if (var2.charAt(i + 1) == '$') {
-                    operand2 = var2.substring(i + 3, var2.indexOf("}", i + 1));
-                    flag2 = 1;
-                    i = var2.indexOf("}", i + 1) + 1;
-                } else i = i + 2;
-
-                int res;
-                if (flag1 == 1 || flag2 == 1) {
-                    outputPattern.append("c ");
-                    if (flag1 == 1) outputPattern.append("$ ").append(operand1).append(" ");
-                    else outputPattern.append(operand1).append(" ");
-                    outputPattern.append(op).append(" ");
-                    if (flag2 == 1) outputPattern.append("$ ").append(operand2).append(" ");
-                    else outputPattern.append(operand2).append(" ");
-                } else {
-                    res = eval(Integer.parseInt(operand1), Integer.parseInt(operand2), op);
-                    outputPattern.append(res);
-                }
-            } else {
-                outputPattern.append(var2.charAt(i));
-            }
-            if (i != var2.length()) outputPattern.append(System.lineSeparator());
-        }
-        return outputPattern.toString();
-    }
-
-    private String getTransitionFunctionString(String[] var, String[] outputPattern, String input) {
-        StringBuilder out = new StringBuilder();
-        out.append(var[0]).append(" ");
-        out.append(input).append(" ");
-        for (String pattern : outputPattern) {
-            out.append(matchOutputPattern(input, pattern));
-        }
-        out.append(" ").append(var[3]).append(" ").append(var[4]);
-        return out.toString();
-    }
-
-    private String matchOutputPattern(String input, String pattern) {
-        StringBuilder out = new StringBuilder();
-        String[] v = pattern.split(" ");
-        char c = v[0].charAt(0);
-        if (c == '$') out.append(input.charAt(Integer.parseInt(v[1])));
-        else if (c == 'c') {
-            ArrayList<Integer> operand = new ArrayList<>();
-            char op = ' ';
-            for (int i = 1; i < v.length; i++) {
-                if (v[i].charAt(0) == '$') {
-                    operand.add(Integer.parseInt(input.charAt(Integer.parseInt(v[i + 1])) + ""));
-                    i = i + 1;
-                } else if (v[i].charAt(0) == '+' || v[i].charAt(0) == '-' || v[i].charAt(0) == '*' || v[i].charAt(0) == '/') {
-                    op = v[i].charAt(0);
-                } else operand.add(Integer.parseInt(v[i]));
-            }
-            out.append(eval(operand.get(0), operand.get(1), op));
-        } else out.append(c);
-        return out.toString();
-    }
 
     private void checkTransitionFunction(String transitionFunction, int lineno) {
         String[] res = transitionFunction.split(" ");
@@ -363,26 +226,12 @@ public class TuringMachine {
         }
     }
 
-    private ArrayList<StringBuilder> resolverExpect(char expect_char, ArrayList<StringBuilder> have) {
-        Set<Character> temp_set = new HashSet<>(G);
-        temp_set.remove(expect_char);
-        return resolverExpect(have, temp_set);
-    }
 
-    private ArrayList<StringBuilder> resolverExpect(ArrayList<StringBuilder> have, Set<Character> temp_set) {
-        ArrayList<StringBuilder> copy_input = new ArrayList<>();
-        for (StringBuilder builder : have) {
-            for (char c : temp_set) {
-                StringBuilder stringBuilder = new StringBuilder(builder);
-                stringBuilder.append(c);
-                copy_input.add(stringBuilder);
-            }
-        }
-        return copy_input;
-    }
-
-
-    //TODO
+    /**
+     * TODO
+     * is done in lab1 ~
+     * @return
+     */
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();

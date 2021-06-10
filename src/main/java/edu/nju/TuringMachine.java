@@ -16,8 +16,6 @@ public class TuringMachine {
     private Set<Character> G;
     // 初始状态
     private String q0;
-    // 当前状态
-    private State q;
     // 终止状态集
     private Set<String> F;
     // 空格符号
@@ -37,7 +35,6 @@ public class TuringMachine {
             temp.setQ(state);
             this.Q.put(state, temp);
         }
-        this.q = this.Q.get(q0);
         this.tapeNum = tapeNum;
         for (TransitionFunction t : Delta) {
             this.Q.get(t.getSourceState().getQ()).addTransitionFunction(t);
@@ -47,6 +44,7 @@ public class TuringMachine {
     /**
      * TODO
      * is done in Lab1 ~
+     *
      * @param tm
      */
     public TuringMachine(String tm) {
@@ -74,7 +72,6 @@ public class TuringMachine {
                         if (s.charAt(2) != '0') System.err.println("Error: " + i);
                         else {
                             q0 = s.split(" ")[2];
-                            q = Q.get(s.split(" ")[2]);
                         }
                         break;
                     case "#B":
@@ -102,7 +99,7 @@ public class TuringMachine {
         if (S == null) System.err.println("Error: lack S");
         if (G == null) System.err.println("Error: lack G");
         if (F == null) System.err.println("Error: lack F");
-        if (q == null) System.err.println("Error: lack q0");
+        if (q0 == null) System.err.println("Error: lack q0");
         if (B == null) System.err.println("Error: lack B");
         if (tapeNum == null) System.err.println("Error: lack N");
         int temp = 0;
@@ -143,30 +140,18 @@ public class TuringMachine {
         else F.addAll(Arrays.asList(res));
     }
 
-
-    public String getState() {
-        return q.getQ();
-    }
-
-    /**
-     * TODO
-     * 根据当前的状态和输入获取迁移函数，修改状态然后返回
-     * @param Z
-     * @return
-     */
-    public TransitionFunction delta(String Z) {
-        TransitionFunction t = q.getDelta(Z);
-        q = t.getDestinationState();
-        return t;
+    public State getInitState() {
+        return Q.get(q0);
     }
 
     /**
      * TODO
      * 停止的两个条件 1. 到了终止态 2. 无路可走，halts
-     * @param Z
+     *
+     * @param q Z
      * @return
      */
-    public boolean isStop(String Z) {
+    public boolean isStop(State q, String Z) {
         return F.contains(q.getQ()) || q.getDelta(Z) == null;
     }
 
@@ -189,8 +174,10 @@ public class TuringMachine {
 
 
     private void resolverTransitionFunction(String s, int lineno) {
+        // 检查迁移函数格式是否正确
         checkTransitionFunction(s, lineno);
         TransitionFunction transitionFunction = new TransitionFunction(s, Q);
+        // 检查是否和已经有的函数冲突
         if (Q.get(transitionFunction.getSourceState().getQ()).containDelta(transitionFunction)) {
             TransitionFunction temp = Q.get(transitionFunction.getSourceState().getQ()).getDelta(transitionFunction.getInput());
             String originalOutput = temp.getOutput();
@@ -202,6 +189,7 @@ public class TuringMachine {
                 System.err.println("Error: 9");
             }
         }
+        // 添加到对应的State中
         Q.get(transitionFunction.getSourceState().getQ()).addTransitionFunction(transitionFunction);
     }
 
@@ -230,6 +218,7 @@ public class TuringMachine {
     /**
      * TODO
      * is done in lab1 ~
+     *
      * @return
      */
     @Override
